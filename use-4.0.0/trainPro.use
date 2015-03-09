@@ -1,0 +1,68 @@
+model TrainModel
+
+class Train 
+operations
+  allWagons() : Set(Wagon) =
+    self.wagon->union(self.wagon.predPlus()->asSet())->
+      union(self.wagon.succPlus()->asSet())
+end
+
+class Wagon 
+operations
+  succPlus() : Set(Wagon) =
+    self.succ->closure(w|w.succ)
+
+  --succPlus() : Set(Wagon) =
+  --  self.succPlusRec(self.succ->asSet())
+  --
+  --succPlusRec(s:Set(Wagon)) : Set(Wagon) =
+  --  let oneStep : Set(Wagon) = s.succ->asSet() in
+  --  if oneStep->exists(w | s->excludes(w))
+  --    then succPlusRec(s->union(oneStep))
+  --    else s
+  --  endif
+
+  predPlus() : Set(Wagon) =
+    self.pred->closure(w|w.pred)
+
+  --predPlus() : Set(Wagon) =
+  --  self.predPlusRec(self.pred->asSet())
+  --
+  --predPlusRec(s:Set(Wagon)) : Set(Wagon) =
+  --  let oneStep : Set(Wagon) = s.pred->asSet() in
+  --  if oneStep->exists(w | s->excludes(w))
+  --    then predPlusRec(s->union(oneStep))
+  --    else s
+  --  endif
+end
+
+association Ownership between
+  Train[*] role train;
+  Wagon[*] role wagon;
+end
+
+association Order between
+  Wagon[*] role pred;
+  Wagon[*] role succ;
+end
+
+constraints
+
+context Train inv wagon1_n: self.wagon->size >= 1
+
+context Wagon inv train1_1: self.train->size = 1
+
+context Wagon inv succ0_1: self.succ->size <= 1
+
+context Wagon inv pred0_1: self.pred->size <= 1
+
+context Train inv oneLastWagon:
+  self.wagon->one(last | self.wagon->forAll(w |
+    last.succPlus()->includesAll(w.succPlus())))
+
+context Train inv noCycles:
+  self.wagon->forAll(w | w.predPlus()->excludes(w))
+
+context w1:Wagon inv commutativity:
+  Wagon.allInstances->forAll(w2 |
+    w1.succ->includes(w2) implies w1.train=w2.train)

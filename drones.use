@@ -1,0 +1,240 @@
+model DroneModel
+
+-- ******************************** Déclaration des Classes ********************************
+class Point
+	attributes
+		id : Integer
+		estReceptacle : Boolean
+		estEntrepot : Boolean
+		estPointVide : Boolean
+		contenancePoint : Integer
+	operations
+		estLibreOp():Boolean begin
+			result := (self.contenancePoint < 1);
+		end
+end
+
+class PointVide
+	operations
+		estSurvole():Boolean begin
+			result := (self.point_Vide.contenancePoint <1);
+		end
+end
+
+class Grille
+	operations
+		getEntrepot():Entrepot begin
+			--result := self.entrepot_Position; --Défini grâce à l'assocition "position"
+		end
+		ajouterPoint(p:Point)
+		supprimerPoint(p:Point)
+end
+
+class Drone 
+	attributes
+		batterie : Integer;
+		capaciteMaxDCAP : Integer;
+		capaciteChargeeCommande : Integer;
+		commandeLivree : Boolean;
+		parcoursDrone : Sequence(Integer)
+		pointCourant : Point
+		pointSuivant : Point
+		
+	operations
+		chargerCommande(c : Commande) begin
+			self.commandeLivree := false;
+			self.capaciteChargeeCommande := c.capaciteComm;
+		end
+
+		livrerCommande() begin
+			commandeLivree := true;
+			capaciteChargeeCommande := 0;
+		end
+
+		avance1Pas() begin
+			self.batterie := self.batterie - 1;
+		end
+
+		retournerEntrepot() begin
+			--self.receptacleOccupe.occupationPlateforme = false;
+			--self.receptacleOccupe := null;
+		end
+
+		chargerBatterie() begin
+			self.batterie := self.batterie + 1
+		end 
+end
+
+class Entrepot
+	attributes
+		capaciteDNB : Integer
+		capaciteRNB : Integer
+	operations
+		estSurvole():Boolean begin
+			result := false; --L'entrepot a une capacité de stockage "illimité"
+		end
+		chargerProduitsDrone(d:Drone)
+		chargerBatterie()
+end
+
+class Produit
+	attributes
+		nom : String
+		reference : String
+		prix : Integer
+		quantite : Integer
+	operations
+		definirProduit(n:String, r:String, p:Integer, q:Integer) begin
+			self.nom := n;
+			self.reference := r;
+			self.prix := p;
+			self.quantite := q;
+		end
+end
+
+class Commande
+	attributes
+		capaciteComm : Integer
+	operations
+		ajouterProduit(pr:Produit)
+		supprimerProduit(pr:Produit)
+end
+
+class Receptacle
+	attributes
+		capaciteRCAP : Integer
+		occupationPlateforme : Boolean
+		livraisonEnCours : Boolean
+		batterieEnCours : Boolean
+	operations
+		estSurvole():Boolean begin
+			result := (self.point_Receptacle.contenancePoint < 1);
+		end
+		estLivrable(d : Drone) : Boolean begin
+			if d.capaciteChargeeCommande > self.capaciteRCAP then
+				result := false
+				else
+				result := true
+			end
+		end
+end
+
+-- ******************************** Déclaration des Associations ********************************
+
+-- Convention de nommage des rôle : nomRôle_NomAssociation
+association Commande_Association between
+	Commande[0..1] role commande_Commande
+	Receptacle[0..1] role receptacle_Commande
+	Produit[0..*] role produits_Commande
+end
+
+association Gestion_Association between
+	Entrepot[1] role entrepot_Gestion
+	Commande[*] role commandes_Gestion
+end
+
+association Drone_Association between
+	Drone[1] role drone_Drone
+	Commande[1] role commande_Drone
+end
+
+association DronesEntrepot_Association between
+	Entrepot[1] role entrepot_DronesEntrepot
+	Drone[*] role drone_DronesEntrepot
+end
+
+association Grille_Association between
+	Grille[1] role grille_Grille
+	Point[*] role points_Grille
+end
+
+association Receptacle_Association between
+	Receptacle[0..1] role receptacle_Receptacle
+	Point[1] role point_Receptacle
+end
+
+association Entrepot_Association between
+	Entrepot[0..1] role entrepot_Entrepot
+	Point[1] role point_Entrepot
+end
+
+association Vide_Association between
+	PointVide[0..1] role pointVide_Vide
+	Point[1] role point_Vide
+end
+
+association Points_Association between
+	Point[*] role pointCourant_Points
+	Point[*] role pointsSuivants_Points
+end
+
+association positionDrone_Association between 
+	Point[0..1] role point_PositionDrone
+	Drone[0..1] role drone_PositionDrone
+end
+
+-- ******************************** Déclaration des Invariants + Pré et Post Conditions********************************
+constraints
+-- Invariants:
+
+	-- Pour la Grille
+	context Grille inv nbPoints : self.points_Grille->size >= 0
+
+	-- Pour les Points
+	--context Point inv minumumDrone : self.drone_ReceptacleDrone >= 0
+	--context Point inv maximumDrone : self.drone_ReceptacleDrone <= 100
+	context Point inv idPoints : self.id > 0
+	context Point inv successeurs : self.pointsSuivants_Points->size <= 4 and self.pointsSuivants_Points->size >= 0 
+	context Point inv capacite : self.contenancePoint <= 1 and self.contenancePoint >= 0
+	context Point inv interblocagePoint : self.pointsSuivants_Points->exists(p|p.contenancePoint = 0) //Au moins une porte de sortie par Point
+
+	-- Pour les Drones
+	context Drone inv batterie : self.batterie >= 0 and self.batterie <= 3
+	context Drone inv capacite_DCAP: self.capaciteMaxDCAP > 0
+
+	-- Pour les Produits
+
+
+	-- Pour les Commandes
+	context Commande inv receptacle1_1 : self.receptacle_Commande->size = 1
+	context Commande inv produit1_n : self.produits_Commande->size > 0
+
+	-- Pour le Réceptacle
+	context Receptacle inv capaciteRCAP : self.capaciteRCAP > 0
+	context r1:Receptacle inv receptacle2Coups : r1.point_Receptacle.pointsSuivants_Points->exists(p|p.estReceptacle = true) or r1.point_Receptacle.pointsSuivants_Points->exists(r2|r2.pointsSuivants_Points->exists(r3|(r3.estReceptacle = true and r3 <> r1.point_Receptacle))) --A Modifier pour inclure l'exclusion du receptacle r1
+	context Receptacle inv protectionReceptacle : self.point_Receptacle.estEntrepot <> true and self.point_Receptacle.estPointVide <> true -- Un point de type Receptacle n'est pas un Point Vide ni un Entrepot
+
+	-- Pour l'Entrepôt
+	context Entrepot inv nbDrones0_DNB : self.capaciteDNB >= 0
+	context Entrepot inv nbReceptacless0_RNB : self.capaciteRNB > 0
+	--context Entrepot inv receptacle1_n : self.receptacle_Position->size > 0 
+	--context Entrepot inv receptacle : self.point_Entrepot.pointsSuivants_Points->exists(p|p.estReceptacle())
+	context Entrepot inv receptacleEntrepot : self.point_Entrepot.pointsSuivants_Points->exists(p|p.estReceptacle = true) --Au moins un réceptacle après un entrepôt
+	context Entrepot inv protectionEntrepot : self.point_Entrepot.estReceptacle <> true and self.point_Entrepot.estPointVide <> true -- Un point de type Entrepot n'est pas un Point Vide ni un Receptacle
+
+	-- Pour le Point Vide
+	context PointVide inv protectionPointVide : self.point_Vide.estReceptacle <> true and self.point_Vide.estEntrepot  <> true -- Un point de type PointVide n'est pas un Entrepot ni un Receptacle
+
+--Pré et Post Conditions
+
+	-- Pour la Grille
+
+	-- Pour les Points
+
+	-- Pour les Drones
+		context Drone::chargerBatterie()
+		pre batteriePre0: self.point_PositionDrone.estReceptacle = true
+		pre batteriePre1: self.point_PositionDrone.contenancePoint = 1
+		pre batteriePre2: self.batterie < 3
+		pre batteriePre3: self.point_PositionDrone.receptacle_Receptacle.livraisonEnCours = false
+		pre batteriePre4: self.point_PositionDrone.receptacle_Receptacle.batterieEnCours = true
+		post batteriePost: self.batterie <= 3
+
+	-- Pour les Produits
+
+	-- Pour les Commandes
+
+	-- Pour le Réceptacle
+
+	-- Pour l'Entrepôt
+

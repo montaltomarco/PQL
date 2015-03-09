@@ -1,0 +1,80 @@
+model DroneModel
+
+class Drone 
+	attributes
+		batterie : Integer
+		capaciteDCAP : Integer
+		commandeLivree : Integer
+	operations
+		livrerCommande(r : Receptacle) 
+end
+class Entrepot
+	attributes
+		capaciteDNB : Integer
+		capaciteRNB : Integer
+end
+
+class Commande
+
+end
+class Receptacle
+	attributes
+		capaciteRCAP : Integer
+end
+class Grille 
+end
+class Point end
+class Produit end
+
+association commande between
+	Commande[1] role commande
+	Receptacle[1] role receptacle
+	Produit[*] role produits
+end
+
+association gestion between
+	Entrepot[1] role entrepot
+	Commande[*] role commandes
+end
+
+association drone between
+	Drone[1] role drone
+	Commande[1] role commande
+end
+
+association position between
+	Grille[1] role grille
+	Receptacle[*] role receptacle
+	Entrepot[1] role entrepot
+end
+
+association grille between
+	Grille[1] role grille
+	Point[*] role points
+end
+
+association receptacle between
+	Receptacle[1] role receptacle
+	Point[1] role point
+end
+
+association entrepot between
+	Entrepot[1] role entrepot
+	Point[1] role point
+end
+
+association receptacleDrone between
+	Receptacle[1] role receptacle
+	Drone[1] role drone
+end
+constraints
+	context Commande inv produit1_n : self.produits->size >= 1
+	context Commande inv receptacle1_1 : self.receptacle->size = 1
+	context Receptacle inv drone0_1 : self.drone->size <= 1
+	context Grille inv entrepot1_1 : self.entrepot->size = 1
+
+
+	
+	
+	
+	

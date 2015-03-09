@@ -1,0 +1,11 @@
+model TrainModel
+class Train end
+class Wagon end
+association Ownership between
+Train[*] role train;
+Wagon[*] role wagon;
+end
+association Order between
+Wagon[*] role prec;
+Wagon[*] role succ;
+end
