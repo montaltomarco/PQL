@@ -230,22 +230,22 @@ open drones.use
 --Pour les Drone
 !set d1.batterie := 3 
 !set d1.capaciteMaxDCAP := 100
-!set d1.parcoursDrone->append(9)
-!set d1.parcoursDrone->append(5)
-!set d1.parcoursDrone->append(1)
-!set d1.parcoursDrone->append(2)
-!set d1.parcoursDrone->append(3)
-!set d1.pointCourant->append(p9)
-!set d1.pointSuivant->append(p5)
+!set d1.parcoursDrone->append(p9)
+!set d1.parcoursDrone->append(p5)
+!set d1.parcoursDrone->append(p1)
+!set d1.parcoursDrone->append(p2)
+!set d1.parcoursDrone->append(p3)
+!set d1.pointCourant := 0
+!set d1.nbPoints := d1.parcoursDrone->size()
 !set d2.batterie := 3
 !set d2.capaciteMaxDCAP := 100
-!set d2.parcoursDrone->append(9)
-!set d2.parcoursDrone->append(10)
-!set d2.parcoursDrone->append(11)
-!set d2.parcoursDrone->append(7)
-!set d2.parcoursDrone->append(8)
-!set d2.parcoursDrone->append(10)
-!set d2.pointCourant->append(p9)
-!set d2.pointSuivant->append(p10)
+!set d2.parcoursDrone->append(p9)
+!set d2.parcoursDrone->append(p10)
+!set d2.parcoursDrone->append(p11)
+!set d2.parcoursDrone->append(p7)
+!set d2.parcoursDrone->append(p8)
+!set d2.parcoursDrone->append(p10)
+!set d2.pointCourant := 0
+!set d2.nbPoints := d2.parcoursDrone->size()
 
 check

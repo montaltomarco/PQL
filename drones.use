@@ -36,23 +36,20 @@ class Drone
 		capaciteMaxDCAP : Integer;
 		capaciteChargeeCommande : Integer;
 		commandeLivree : Boolean;
-		parcoursDrone : Sequence(Integer)
-		pointCourant : Point
-		pointSuivant : Point
+		parcoursDrone : Sequence(Point)
+		idPointCourant : Integer
 		
 	operations
-		chargerCommande(c : Commande) begin
-			self.commandeLivree := false;
-			self.capaciteChargeeCommande := c.capaciteComm;
-		end
-
 		livrerCommande() begin
-			commandeLivree := true;
-			capaciteChargeeCommande := 0;
+			self.commandeLivree := true;
+			self.capaciteChargeeCommande := 0;
 		end
 
 		avance1Pas() begin
 			self.batterie := self.batterie - 1;
+			--self.parcoursDrone.at(self.idPointCourant) := 0;
+			self.idPointCourant := self.idPointCourant + 1;
+			--self.parcoursDrone.at(self.idPointCourant) := 1;
 		end
 
 		retournerEntrepot() begin
@@ -229,6 +226,15 @@ constraints
 		pre batteriePre3: self.point_PositionDrone.receptacle_Receptacle.livraisonEnCours = false
 		pre batteriePre4: self.point_PositionDrone.receptacle_Receptacle.batterieEnCours = true
 		post batteriePost: self.batterie <= 3
+
+		context Drone::livrerCommande()
+		pre livrerPre1: self.capaciteChargeeCommande > 0
+		pre livrerPre2: self.commandeLivree = false
+		post livrerPost1: self.capaciteChargeeCommande = 0
+		post livrerPost2: self.commandeLivree = true
+
+		context Drone::avance1Pas()
+		pre avancerPre1: self.point_PositionDrone.contenancePoint = 0
 
 	-- Pour les Produits
 
