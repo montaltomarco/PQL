@@ -1,6 +1,39 @@
 model DroneModel
 
 -- ******************************** Déclaration des Classes ********************************
+class Temps
+	attributes
+		id : Integer
+		grille : Grille
+		listePoints : Collection(Point)
+		listeDrones : Collection(Drone)
+	operations
+		setGrille(g : Grille) begin
+			self.grille := g;
+		end
+
+		setPoints(lPts : Collection(Point)) begin
+			self.listePoints := lPts;
+		end
+
+		setDrones(lDrs : Collection(Drone)) begin
+			self.listeDrones := lDrs;
+		end
+
+		execute(tSucc:Temps): Temps begin
+			insert(self,tSucc) into Temps_Association;
+			tSucc.setGrille(self.grille_GrilleTemps);
+			tSucc.setPoints(self.grille_GrilleTemps.points_Grille);
+			tSucc.setDrones(self.grille_GrilleTemps.points_Grille.entrepot_Entrepot.drone_DronesEntrepot);
+			result := tSucc;
+		end
+
+		succPlus() : Set(Temps) = self.succ->closure(t|t.succ)
+
+		predPlus() : Set(Temps) = self.pred->closure(t|t.pred)
+
+end
+
 class Point
 	attributes
 		id : Integer
@@ -47,9 +80,9 @@ class Drone
 
 		avance1Pas() begin
 			self.batterie := self.batterie - 1;
-			--self.parcoursDrone.at(self.idPointCourant) := 0;
+			self.parcoursDrone->at(self.idPointCourant).contenancePoint := 0;
 			self.idPointCourant := self.idPointCourant + 1;
-			--self.parcoursDrone.at(self.idPointCourant) := 1;
+			self.parcoursDrone->at(self.idPointCourant).contenancePoint := 1;
 		end
 
 		retournerEntrepot() begin
@@ -118,7 +151,22 @@ end
 
 -- ******************************** Déclaration des Associations ********************************
 
--- Convention de nommage des rôle : nomRôle_NomAssociation
+-- Convention de nommage des rôles : nomRôle_NomAssociation
+association GrilleTemps_Association between
+	Grille[0..1] role grille_GrilleTemps
+	Temps[0..*] role temps_GrilleTemps
+end
+
+association Temps_Association between
+	Temps[*] role pred
+	Temps[*] role succ
+end
+
+association Grille_Association between
+	Grille[1] role grille_Grille
+	Point[*] role points_Grille
+end
+
 association Commande_Association between
 	Commande[0..1] role commande_Commande
 	Receptacle[0..1] role receptacle_Commande
@@ -138,11 +186,6 @@ end
 association DronesEntrepot_Association between
 	Entrepot[1] role entrepot_DronesEntrepot
 	Drone[*] role drone_DronesEntrepot
-end
-
-association Grille_Association between
-	Grille[1] role grille_Grille
-	Point[*] role points_Grille
 end
 
 association Receptacle_Association between
@@ -173,6 +216,22 @@ end
 -- ******************************** Déclaration des Invariants + Pré et Post Conditions********************************
 constraints
 -- Invariants:
+	-- Pour le Temps et la Grille
+	context Temps inv grille1_1: self.grille_GrilleTemps->size = 1
+
+	context Temps inv succ0_1: self.succ->size <= 1
+
+	context Temps inv pred0_1: self.pred->size <= 1
+
+	context Grille inv oneLastTemps:
+	  self.temps_GrilleTemps->one(last | self.temps_GrilleTemps->forAll(t|last.succPlus()->includesAll(t.succPlus())))
+
+	context Grille inv noCycles:
+	  self.temps_GrilleTemps->forAll(t | t.predPlus()->excludes(t))
+
+	context t1:Temps inv commutativity:
+	  Temps.allInstances->forAll(t2 |
+	    t1.succ->includes(t2) implies t1.grille_GrilleTemps=t2.grille_GrilleTemps)
 
 	-- Pour la Grille
 	context Grille inv nbPoints : self.points_Grille->size >= 0
@@ -234,7 +293,8 @@ constraints
 		post livrerPost2: self.commandeLivree = true
 
 		context Drone::avance1Pas()
-		pre avancerPre1: self.point_PositionDrone.contenancePoint = 0
+		pre avancerPre1: self.parcoursDrone->at(self.idPointCourant).contenancePoint = 1
+		pre avancerPre2: self.parcoursDrone->at(self.idPointCourant + 1).contenancePoint = 0
 
 	-- Pour les Produits
 

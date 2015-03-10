@@ -1,6 +1,7 @@
 A METTRE DANS LA CONSOLE :
 
 read Google Drive/Hexanome H4112/Projet QL/UML/drone.cmd
+read Documents/4IF/Qualite_Logicielle/PQL/drone.cmd
 
 PS : Use va toujours commencer la lecture dans votre dossier Home et non à partir de l'endroit où il est exécuté.
 

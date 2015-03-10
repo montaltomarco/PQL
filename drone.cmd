@@ -2,6 +2,9 @@ reset
 open drones.use
 
 --********************Définition des Objets*****************************
+-- Pour le Temps
+!create t1:Temps -- 1er Temps crée
+
 -- Pour la Grille
 !create g:Grille
 
@@ -57,6 +60,9 @@ open drones.use
 
 
 --********************Associations des objets suivant le Diagramme de Classe*****************************
+--Pour GrilleTemps_Association
+!insert (g,t1) into GrilleTemps_Association
+
 --Pour Grille_Association
 !insert (g,p1) into Grille_Association
 !insert (g,p2) into Grille_Association
@@ -136,14 +142,6 @@ open drones.use
 -- Pour Drone_Association
 !insert (d1,c1) into Drone_Association
 !insert (d2,c2) into Drone_Association
-
--- Pour PositionDrone_Association
-!insert (p9,d1) into PositionDrone_Association
-!insert (p9,d2) into PositionDrone_Association	
-
--- Pour ReceptacleDrone_Association
-!insert (r3,d1) into ReceptacleDrone_Association
-!insert (r4,d2) into ReceptacleDrone_Association
 
 --Pour Commande_Association
 !insert (c1,r3,pr1) into Commande_Association
@@ -249,3 +247,5 @@ open drones.use
 !set d2.nbPoints := d2.parcoursDrone->size()
 
 check
+
+gen start drones.assl ExecuterModel(g) 
