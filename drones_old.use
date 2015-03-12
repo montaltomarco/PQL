@@ -3,18 +3,9 @@ model DroneModel
 -- ******************************** Déclaration des Classes ********************************
 class Point
 	attributes
-		x : Integer;
-		y : Integer;
 		estReceptacle : Boolean
 		estLibre : Boolean
 	operations
-		getX():Integer begin
-				result := self.x
-		end
-		getY():Integer begin
-				result := self.y
-		end
-
 		estReceptacleOp():Boolean begin
 			if self.receptacle_Receptacle->size > 0 then
 				result := self.receptacle_Receptacle.oclIsTypeOf(Receptacle);

@@ -167,6 +167,11 @@ association Grille_Association between
 	Point[*] role points_Grille
 end
 
+association Points_Association between
+	Point[*] role pointPrecedents_Points
+	Point[*] role pointsSuivants_Points
+end
+
 association Commande_Association between
 	Commande[0..1] role commande_Commande
 	Receptacle[0..1] role receptacle_Commande
@@ -201,11 +206,6 @@ end
 association Vide_Association between
 	PointVide[0..1] role pointVide_Vide
 	Point[1] role point_Vide
-end
-
-association Points_Association between
-	Point[*] role pointCourant_Points
-	Point[*] role pointsSuivants_Points
 end
 
 association positionDrone_Association between 
@@ -295,6 +295,8 @@ constraints
 		context Drone::avance1Pas()
 		pre avancerPre1: self.parcoursDrone->at(self.idPointCourant).contenancePoint = 1
 		pre avancerPre2: self.parcoursDrone->at(self.idPointCourant + 1).contenancePoint = 0
+		pre avancerPost1: self.parcoursDrone->at(self.idPointCourant).contenancePoint = 0
+		pre avancerPost2: self.parcoursDrone->at(self.idPointCourant + 1).contenancePoint = 1
 
 	-- Pour les Produits
 

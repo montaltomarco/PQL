@@ -248,4 +248,6 @@ open drones.use
 
 check
 
-gen start drones.assl ExecuterModel(g) 
+gen start drones.assl ExecuterModel(g,12) 
+gen result
+gen result accept
