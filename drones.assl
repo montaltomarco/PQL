@@ -1,0 +1,16 @@
+procedure ExecuterModel(gr:Grille, nbT:Integer) 
+var nbTemps : Integer,
+    grilleCourante : Grille,
+    tempsCourant : Sequence(Temps), 
+    listePoints : Collection(Point), 
+    listeDrones : Collection(Drone);
+begin
+    --grilleCourante := gr;
+    --tempsCourant := gr.temps_GrilleTemps;
+    --listePoints := gr.points_Grille;
+    --listeDrones := gr.points_Grille.entrepot_Entrepot.drone_DronesEntrepot;
+
+    nbTemps := Try([Sequence{1..nbT}]);
+    tempsCourant := CreateN(Temps,[nbTemps]);
+    Try(Temps_Association, [tempsCourant], [tempsCourant]);
+end;
