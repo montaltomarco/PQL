@@ -45,6 +45,27 @@ class Point
 		estLibreOp():Boolean begin
 			result := (self.contenancePoint < 1);
 		end
+		estOccupeOp():Boolean begin
+			result := (self.contenancePoint = 1);
+		end
+statemachines
+
+	 psm Usage
+	 states
+	 -- The start node
+	 startUp:initial
+	 -- The initial state after creation.
+	 estLibre [self.contenancePoint = 0 and self.estReceptacle = true and self.estEntrepot = false and self.estPointVide = false]
+	 -- une drone est arrivee.
+	 droneArrivee [self.contenancePoint = 1]
+	 transitions
+	 -- Define the first state after creation.
+	 startUp -> estLibre { create }
+	 -- A drone has arrived.
+	 estLibre -> droneArrivee {[self.contenancePoint = 1] estOccupeOp()}
+	 -- Abort
+	 droneArrivee -> estLibre {estLibreOp()}
+	 end
 end
 
 class PointVide
@@ -93,6 +114,20 @@ class Drone
 		chargerBatterie() begin
 			self.batterie := self.batterie + 1
 		end 
+		
+statemachines
+
+	 psm Usage
+	 states
+	 -- The start node
+	 startUp:initial
+	 -- The initial state after creation.
+	 est_a_l_entrepot [self.batterie =3 and
+		self.commandeLivree = false]
+	 transitions
+	 -- Define the first state after creation.
+	 startUp -> est_a_l_entrepot { create }
+	 end
 end
 
 class Entrepot
