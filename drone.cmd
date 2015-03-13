@@ -239,22 +239,21 @@ open drones.use
 --Pour les Drone
 !set d1.batterie := 3 
 !set d1.capaciteMaxDCAP := 100
--- Append fonctionnait mais il ne veut plus s'exécuter
---!set d1.parcoursDrone->append(p9)
---!set d1.parcoursDrone->append(p5)
---!set d1.parcoursDrone->append(d1)
---!set d1.parcoursDrone->append(p2)
---!set d1.parcoursDrone->append(p3)
+!d1.ajouterPoint(p9)
+!d1.ajouterPoint(p5)
+!d1.ajouterPoint(p1)
+!d1.ajouterPoint(p2)
+!d1.ajouterPoint(p3)
 !set d1.idPointCourant := 0
 !set d1.nbPoints := d1.parcoursDrone->size()
 !set d2.batterie := 3
 !set d2.capaciteMaxDCAP := 100
---!set d2.parcoursDrone->append(p9)
---!set d2.parcoursDrone->append(p10)
---!set d2.parcoursDrone->append(p11)
---!set d2.parcoursDrone->append(p7)
---!set d2.parcoursDrone->append(p8)
---!set d2.parcoursDrone->append(p10)
+!d2.ajouterPoint(p9)
+!d2.ajouterPoint(p10)
+!d2.ajouterPoint(p11)
+!d2.ajouterPoint(p7)
+!d2.ajouterPoint(p8)
+!d2.ajouterPoint(p4)
 !set d2.idPointCourant := 0
 !set d2.nbPoints := d2.parcoursDrone->size()
 

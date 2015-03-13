@@ -92,7 +92,7 @@ class Drone
 		capaciteMaxDCAP : Integer init = 0
 		capaciteChargeeCommande : Integer init = 0
 		commandeLivree : Boolean init = false
-		parcoursDrone : Sequence(Point)
+		parcoursDrone : Sequence(Point) init = Sequence{}
 		idPointCourant : Integer init = 0
 		nbPoints : Integer init = 0
 		
@@ -116,7 +116,11 @@ class Drone
 
 		chargerBatterie() begin
 			self.batterie := self.batterie + 1
-		end 
+		end
+
+		ajouterPoint(p:Point) begin
+			self.parcoursDrone := self.parcoursDrone->append(p);
+		end
 		
 statemachines
 
