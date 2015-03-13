@@ -4,28 +4,29 @@ model DroneModel
 class Temps
 	attributes
 		id : Integer
-		grille : Grille
-		listePoints : Collection(Point)
-		listeDrones : Collection(Drone)
+		stringLue : String
+		stringEcrite : String init = 'Appuyez sur la touche Entree pour continuer ...'
+		tempsSuivant : Temps
+
 	operations
-		setGrille(g : Grille) begin
-			self.grille := g;
+		execute() begin
+			self.tempsSuivant := new Temps;
+
+			for drone in self.drone_DronePointTemps do
+				if drone.commandeLivree = false then
+					drone.avance1Pas();
+					else
+						drone.recule1Pas();
+				end
+				--insert (drone, drone.parcoursDrone.at(drone.idPointCourant),self) into DronePointTemps_Association;
+			end
+
+			--insert (self,tSucc) into Temps_Association;
+			--insert (self.grille_GrilleTemps,tempsSuivant) into GrilleTemps_Association;
 		end
 
-		setPoints(lPts : Collection(Point)) begin
-			self.listePoints := lPts;
-		end
-
-		setDrones(lDrs : Collection(Drone)) begin
-			self.listeDrones := lDrs;
-		end
-
-		execute(tSucc:Temps): Temps begin
-			insert(self,tSucc) into Temps_Association;
-			tSucc.setGrille(self.grille_GrilleTemps);
-			tSucc.setPoints(self.grille_GrilleTemps.points_Grille);
-			tSucc.setDrones(self.grille_GrilleTemps.points_Grille.entrepot_Entrepot.drone_DronesEntrepot);
-			result := tSucc;
+		tempsSuivantOp():Temps begin
+			result := self.tempsSuivant;
 		end
 
 		succPlus() : Set(Temps) = self.succ->closure(t|t.succ)
@@ -95,45 +96,92 @@ class Drone
 		parcoursDrone : Sequence(Point) init = Sequence{}
 		idPointCourant : Integer init = 0
 		nbPoints : Integer init = 0
+		tempsCourant : Temps
+		tempsSuivant : Temps
+		droneStatus : Integer init = 0 -- 0 pour en vol et 1 pour posé
 		
 	operations
-		livrerCommande() begin
-			self.commandeLivree := true;
-			self.capaciteChargeeCommande := 0;
-		end
-
-		avance1Pas() begin
-			self.batterie := self.batterie - 1;
-			self.parcoursDrone->at(self.idPointCourant).contenancePoint := 0;
-			self.idPointCourant := self.idPointCourant + 1;
-			self.parcoursDrone->at(self.idPointCourant).contenancePoint := 1;
-		end
-
-		retournerEntrepot() begin
-			--self.receptacleOccupe.occupationPlateforme = false;
-			--self.receptacleOccupe := null;
+		ajouterPoint(p:Point) begin
+			self.parcoursDrone := self.parcoursDrone->append(p);
 		end
 
 		chargerBatterie() begin
 			self.batterie := self.batterie + 1
 		end
 
-		ajouterPoint(p:Point) begin
-			self.parcoursDrone := self.parcoursDrone->append(p);
+		atterissageDrone() begin
+			self.droneStatus := 1;
 		end
-		
-statemachines
 
-	 psm Usage
-	 states
-	 -- The start node
-	 startUp:initial
-	 -- The initial state after creation.
-	 est_a_l_entrepot [self.batterie = 3 and self.commandeLivree = false]
-	 transitions
-	 -- Define the first state after creation.
-	 startUp -> est_a_l_entrepot { create }
-	 end
+		decollageDrone() begin
+			self.droneStatus := 0;
+		end
+
+		livrerCommande() begin
+			self.commandeLivree := true;
+			self.capaciteChargeeCommande := 0;
+		end
+
+		avance1Pas() begin
+			if self.batterie <= 1 and self.parcoursDrone->at(self.idPointCourant).estReceptacle = true then
+				if self.droneStatus = 0 then
+					self.atterissageDrone();
+					else
+						self.chargerBatterie();
+				end
+				else
+					if self.parcoursDrone->size() = (self.idPointCourant + 1) and self.commandeLivree = false then
+						if self.droneStatus = 0 then
+							self.atterissageDrone();
+							else
+								self.livrerCommande();
+						end
+						else
+							self.batterie := self.batterie - 1;
+							self.parcoursDrone->at(self.idPointCourant).contenancePoint := 0;
+							self.idPointCourant := self.idPointCourant + 1;
+							self.parcoursDrone->at(self.idPointCourant).contenancePoint := 1;
+					end
+			end
+		end
+
+		attendre() begin
+		end
+
+		recule1Pas() begin
+			if self.batterie <= 1 and self.parcoursDrone->at(self.idPointCourant).estReceptacle = true then
+				if self.droneStatus = 0 then
+					self.atterissageDrone();
+					else
+						self.chargerBatterie();
+				end
+				else
+					if self.idPointCourant = 0 then
+						if self.droneStatus = 0 then
+							self.atterissageDrone();
+							else
+								self.attendre()
+						end
+						else
+							self.batterie := self.batterie - 1;
+							self.parcoursDrone->at(self.idPointCourant).contenancePoint := 0;
+							self.idPointCourant := self.idPointCourant - 1;
+							self.parcoursDrone->at(self.idPointCourant).contenancePoint := 1;
+					end
+			end
+		end
+
+	statemachines
+		psm Usage
+		states
+		-- The start node
+		startUp:initial
+		-- The initial state after creation.
+		est_a_l_entrepot [self.batterie = 3 and self.commandeLivree = false]
+		transitions
+		-- Define the first state after creation.
+		startUp -> est_a_l_entrepot { create }
+	end
 end
 
 class Entrepot
@@ -332,11 +380,19 @@ constraints
 		post livrerPost1: self.capaciteChargeeCommande = 0
 		post livrerPost2: self.commandeLivree = true
 
-		context Drone::avance1Pas()
-		pre avancerPre1: self.parcoursDrone->at(self.idPointCourant).contenancePoint = 1
-		pre avancerPre2: self.parcoursDrone->at(self.idPointCourant + 1).contenancePoint = 0
-		pre avancerPost1: self.parcoursDrone->at(self.idPointCourant).contenancePoint = 0
-		pre avancerPost2: self.parcoursDrone->at(self.idPointCourant + 1).contenancePoint = 1
+		--context Drone::avance1Pas()
+		--pre avancerPre1: self.parcoursDrone->at(self.idPointCourant).contenancePoint = 1
+		--pre avancerPre2: self.parcoursDrone->at(self.idPointCourant + 1).contenancePoint = 0
+		--pre avancerPre3: self.parcoursDrone->size() <> (self.idPointCourant + 1)
+		--pre avancerPost1: self.parcoursDrone->at(self.idPointCourant).contenancePoint = 0
+		--pre avancerPost2: self.parcoursDrone->at(self.idPointCourant + 1).contenancePoint = 1
+
+		--context Drone::recule1Pas()
+		--pre reculerPre1: self.parcoursDrone->at(self.idPointCourant).contenancePoint = 1
+		--pre reculerPre2: self.parcoursDrone->at(self.idPointCourant + 1).contenancePoint = 0
+		--pre reculerPre3: (self.idPointCourant - 1) <> 0
+		--pre reculerPost1: self.parcoursDrone->at(self.idPointCourant).contenancePoint = 0
+		--pre reculerPost2: self.parcoursDrone->at(self.idPointCourant - 1).contenancePoint = 1
 
 	-- Pour les Produits
 

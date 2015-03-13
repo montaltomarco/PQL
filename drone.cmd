@@ -4,8 +4,6 @@ open drones.use
 --********************Définition des Objets*****************************
 -- Pour le Temps
 !create t1:Temps
-!create t2:Temps 
-!create t3:Temps
 
 -- Pour la Grille
 !create g:Grille
@@ -62,12 +60,8 @@ open drones.use
 --********************Associations des objets suivant le Diagramme de Classe*****************************
 --Pour GrilleTemps_Association
 !insert (g,t1) into GrilleTemps_Association
-!insert (g,t2) into GrilleTemps_Association
-!insert (g,t3) into GrilleTemps_Association
 
 -- Pour Temps_Association
-!insert (t1,t2) into Temps_Association
-!insert (t2,t3) into Temps_Association
 
 --Pour DronePointTemps_Association
 !insert(d1,p9,t1) into DronePointTemps_Association
