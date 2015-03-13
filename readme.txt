@@ -23,3 +23,4 @@ TO DO :
 
  - La cloture du chemin d'un drone quand il est en état de livraison doit être un réceptacle et son début doit être un entrepôt ;
 
+or (self.estReceptacle = true and self.estEntrepot = false and self.estPointVide = false) or (self.estReceptacle = false and self.estEntrepot = true and self.estPointVide = false) or (self.estReceptacle = false and self.estEntrepot = false and self.estPointVide = true)

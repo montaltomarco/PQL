@@ -3,7 +3,9 @@ open drones.use
 
 --********************Définition des Objets*****************************
 -- Pour le Temps
-!create t1:Temps -- 1er Temps crée
+!create t1:Temps
+!create t2:Temps 
+!create t3:Temps
 
 -- Pour la Grille
 !create g:Grille
@@ -57,11 +59,20 @@ open drones.use
 !create pr5 : Produit
 
 
-
-
 --********************Associations des objets suivant le Diagramme de Classe*****************************
 --Pour GrilleTemps_Association
 !insert (g,t1) into GrilleTemps_Association
+!insert (g,t2) into GrilleTemps_Association
+!insert (g,t3) into GrilleTemps_Association
+
+-- Pour Temps_Association
+!insert (t1,t2) into Temps_Association
+!insert (t2,t3) into Temps_Association
+
+--Pour DronePointTemps_Association
+!insert(d1,p9,t1) into DronePointTemps_Association
+--!insert(d1,p10,t1) into DronePointTemps_Association -- Fait echouer les deux invariants drone1PointParTemps et tempsPointDrone1_n_1 (invariants dont le rôle est identique mais ils ne sont pas écrits de la même façon)
+!insert(d2,p9,t1) into DronePointTemps_Association
 
 --Pour Grille_Association
 !insert (g,p1) into Grille_Association
@@ -228,22 +239,23 @@ open drones.use
 --Pour les Drone
 !set d1.batterie := 3 
 !set d1.capaciteMaxDCAP := 100
-!set d1.parcoursDrone->append(p9)
-!set d1.parcoursDrone->append(p5)
-!set d1.parcoursDrone->append(p1)
-!set d1.parcoursDrone->append(p2)
-!set d1.parcoursDrone->append(p3)
-!set d1.pointCourant := 0
+-- Append fonctionnait mais il ne veut plus s'exécuter
+--!set d1.parcoursDrone->append(p9)
+--!set d1.parcoursDrone->append(p5)
+--!set d1.parcoursDrone->append(d1)
+--!set d1.parcoursDrone->append(p2)
+--!set d1.parcoursDrone->append(p3)
+!set d1.idPointCourant := 0
 !set d1.nbPoints := d1.parcoursDrone->size()
 !set d2.batterie := 3
 !set d2.capaciteMaxDCAP := 100
-!set d2.parcoursDrone->append(p9)
-!set d2.parcoursDrone->append(p10)
-!set d2.parcoursDrone->append(p11)
-!set d2.parcoursDrone->append(p7)
-!set d2.parcoursDrone->append(p8)
-!set d2.parcoursDrone->append(p10)
-!set d2.pointCourant := 0
+--!set d2.parcoursDrone->append(p9)
+--!set d2.parcoursDrone->append(p10)
+--!set d2.parcoursDrone->append(p11)
+--!set d2.parcoursDrone->append(p7)
+--!set d2.parcoursDrone->append(p8)
+--!set d2.parcoursDrone->append(p10)
+!set d2.idPointCourant := 0
 !set d2.nbPoints := d2.parcoursDrone->size()
 
 check

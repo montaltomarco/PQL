@@ -10,20 +10,11 @@
     <showrolenames>false</showrolenames>
     <showgrid>false</showgrid>
   </diagramOptions>
-  <node id="estLibre" sizeCalculated="true" type="StateNode">
-    <name>estLibre</name>
-    <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-      <x>20.549730999479678</x>
-      <y>47.387993341898074</y>
-    </strategy>
-    <showInvariant>true</showInvariant>
-    <hidden>false</hidden>
-  </node>
   <node id="droneArrivee" sizeCalculated="true" type="StateNode">
     <name>droneArrivee</name>
     <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-      <x>87.43303154257245</x>
-      <y>20.0</y>
+      <x>714.4330315425725</x>
+      <y>221.0</y>
     </strategy>
     <showInvariant>true</showInvariant>
     <hidden>false</hidden>
@@ -53,12 +44,23 @@
     </node>
     <hidden>false</hidden>
   </node>
+  <node height="95.955078125" id="estLibre" sizeCalculated="false"
+    type="StateNode" width="159.0">
+    <name>estLibre</name>
+    <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
+      <x>47.549730999479664</x>
+      <y>209.3879933418981</y>
+    </strategy>
+    <showInvariant>true</showInvariant>
+    <hidden>false</hidden>
+  </node>
   <edge type="Transition">
-    <source>startUp</source>
+    <source>droneArrivee</source>
     <target>estLibre</target>
-    <name>create/</name>
+    <name>estLibreOp() : Boolean/</name>
     <waypoints>
-      <edgeproperty id="transition::startUp::estLibre::::WayPoint::0"
+      <edgeproperty
+        id="transition::droneArrivee::estLibre::::WayPoint::0"
         sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
         <name>0</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
@@ -69,7 +71,8 @@
         <specialid>1</specialid>
         <hidden>false</hidden>
       </edgeproperty>
-      <edgeproperty id="transition::startUp::estLibre::::WayPoint::1"
+      <edgeproperty
+        id="transition::droneArrivee::estLibre::::WayPoint::1"
         sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
         <name>1</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
@@ -84,20 +87,20 @@
     <hidden>false</hidden>
     <Transitions>
       <Transition>
-        <trigger>create</trigger>
+        <trigger>estLibreOp() : Boolean</trigger>
         <guard/>
         <post/>
-        <edgeproperty id="create/" sizeCalculated="true"
+        <edgeproperty id="estLibreOp() : Boolean/" sizeCalculated="true"
           type="TransitionLabel" userDefined="false" visible="true">
-          <name>create/</name>
+          <name>estLibreOp() : Boolean/</name>
           <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
             <userOffsetX>0.0</userOffsetX>
             <userOffsetY>0.0</userOffsetY>
             <offsetX>0.0</offsetX>
             <offsetY>10.0</offsetY>
             <related length="2">
-              <related0>transition::startUp::estLibre::::WayPoint::0</related0>
-              <related1>transition::startUp::estLibre::::WayPoint::1</related1>
+              <related0>transition::droneArrivee::estLibre::::WayPoint::0</related0>
+              <related1>transition::droneArrivee::estLibre::::WayPoint::1</related1>
             </related>
           </strategy>
           <hidden>false</hidden>
@@ -162,12 +165,11 @@
     </Transitions>
   </edge>
   <edge type="Transition">
-    <source>droneArrivee</source>
+    <source>startUp</source>
     <target>estLibre</target>
-    <name>estLibreOp() : Boolean/</name>
+    <name>create/</name>
     <waypoints>
-      <edgeproperty
-        id="transition::droneArrivee::estLibre::::WayPoint::0"
+      <edgeproperty id="transition::startUp::estLibre::::WayPoint::0"
         sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
         <name>0</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
@@ -178,8 +180,7 @@
         <specialid>1</specialid>
         <hidden>false</hidden>
       </edgeproperty>
-      <edgeproperty
-        id="transition::droneArrivee::estLibre::::WayPoint::1"
+      <edgeproperty id="transition::startUp::estLibre::::WayPoint::1"
         sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
         <name>1</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
@@ -194,20 +195,20 @@
     <hidden>false</hidden>
     <Transitions>
       <Transition>
-        <trigger>estLibreOp() : Boolean</trigger>
+        <trigger>create</trigger>
         <guard/>
         <post/>
-        <edgeproperty id="estLibreOp() : Boolean/" sizeCalculated="true"
+        <edgeproperty id="create/" sizeCalculated="true"
           type="TransitionLabel" userDefined="false" visible="true">
-          <name>estLibreOp() : Boolean/</name>
+          <name>create/</name>
           <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
             <userOffsetX>0.0</userOffsetX>
             <userOffsetY>0.0</userOffsetY>
             <offsetX>0.0</offsetX>
             <offsetY>10.0</offsetY>
             <related length="2">
-              <related0>transition::droneArrivee::estLibre::::WayPoint::0</related0>
-              <related1>transition::droneArrivee::estLibre::::WayPoint::1</related1>
+              <related0>transition::startUp::estLibre::::WayPoint::0</related0>
+              <related1>transition::startUp::estLibre::::WayPoint::1</related1>
             </related>
           </strategy>
           <hidden>false</hidden>

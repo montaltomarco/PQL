@@ -36,11 +36,11 @@ end
 
 class Point
 	attributes
-		id : Integer
-		estReceptacle : Boolean
-		estEntrepot : Boolean
-		estPointVide : Boolean
-		contenancePoint : Integer
+		id : Integer init = 0
+		estReceptacle : Boolean init = false
+		estEntrepot : Boolean init = false
+		estPointVide : Boolean init = false
+		contenancePoint : Integer init = 0
 	operations
 		estLibreOp():Boolean begin
 			result := (self.contenancePoint < 1);
@@ -51,13 +51,15 @@ class Point
 statemachines
 
 	 psm Usage
+
 	 states
 	 -- The start node
 	 startUp:initial
 	 -- The initial state after creation.
-	 estLibre [self.contenancePoint = 0 and self.estReceptacle = true and self.estEntrepot = false and self.estPointVide = false]
+	 estLibre [self.contenancePoint = 0 and ((self.estReceptacle = false and self.estEntrepot = false and self.estPointVide = false) or (self.estReceptacle = true and self.estEntrepot = false and self.estPointVide = false) or (self.estReceptacle = false and self.estEntrepot = true and self.estPointVide = false) or (self.estReceptacle = false and self.estEntrepot = false and self.estPointVide = true))]
 	 -- une drone est arrivee.
 	 droneArrivee [self.contenancePoint = 1]
+
 	 transitions
 	 -- Define the first state after creation.
 	 startUp -> estLibre { create }
@@ -86,12 +88,13 @@ end
 
 class Drone 
 	attributes
-		batterie : Integer;
-		capaciteMaxDCAP : Integer;
-		capaciteChargeeCommande : Integer;
-		commandeLivree : Boolean;
+		batterie : Integer init = 3
+		capaciteMaxDCAP : Integer init = 0
+		capaciteChargeeCommande : Integer init = 0
+		commandeLivree : Boolean init = false
 		parcoursDrone : Sequence(Point)
-		idPointCourant : Integer
+		idPointCourant : Integer init = 0
+		nbPoints : Integer init = 0
 		
 	operations
 		livrerCommande() begin
@@ -122,8 +125,7 @@ statemachines
 	 -- The start node
 	 startUp:initial
 	 -- The initial state after creation.
-	 est_a_l_entrepot [self.batterie =3 and
-		self.commandeLivree = false]
+	 est_a_l_entrepot [self.batterie = 3 and self.commandeLivree = false]
 	 transitions
 	 -- Define the first state after creation.
 	 startUp -> est_a_l_entrepot { create }
@@ -197,6 +199,12 @@ association Temps_Association between
 	Temps[*] role succ
 end
 
+association DronePointTemps_Association between
+	Drone[0..*] role drone_DronePointTemps
+	Point[0..*] role point_DronePointTemps
+	Temps[0..*] role temps_DronePointTemps
+end
+
 association Grille_Association between
 	Grille[1] role grille_Grille
 	Point[*] role points_Grille
@@ -219,7 +227,7 @@ association Gestion_Association between
 end
 
 association Drone_Association between
-	Drone[1] role drone_Drone
+	Drone[0..1] role drone_Drone
 	Commande[1] role commande_Drone
 end
 
@@ -230,46 +238,38 @@ end
 
 association Receptacle_Association between
 	Receptacle[0..1] role receptacle_Receptacle
-	Point[1] role point_Receptacle
+	Point[0..1] role point_Receptacle
 end
 
 association Entrepot_Association between
 	Entrepot[0..1] role entrepot_Entrepot
-	Point[1] role point_Entrepot
+	Point[0..1] role point_Entrepot
 end
 
 association Vide_Association between
 	PointVide[0..1] role pointVide_Vide
-	Point[1] role point_Vide
-end
-
-association positionDrone_Association between 
-	Point[0..1] role point_PositionDrone
-	Drone[0..1] role drone_PositionDrone
+	Point[0..1] role point_Vide
 end
 
 -- ******************************** Déclaration des Invariants + Pré et Post Conditions********************************
 constraints
 -- Invariants:
-	-- Pour le Temps et la Grille
+	-- Pour le Temps
 	context Temps inv grille1_1: self.grille_GrilleTemps->size = 1
-
 	context Temps inv succ0_1: self.succ->size <= 1
-
 	context Temps inv pred0_1: self.pred->size <= 1
-
-	context Grille inv oneLastTemps:
-	  self.temps_GrilleTemps->one(last | self.temps_GrilleTemps->forAll(t|last.succPlus()->includesAll(t.succPlus())))
-
-	context Grille inv noCycles:
-	  self.temps_GrilleTemps->forAll(t | t.predPlus()->excludes(t))
-
-	context t1:Temps inv commutativity:
-	  Temps.allInstances->forAll(t2 |
-	    t1.succ->includes(t2) implies t1.grille_GrilleTemps=t2.grille_GrilleTemps)
+	context t1:Temps inv commutativity: Temps.allInstances->forAll(t2 | t1.succ->includes(t2) implies t1.grille_GrilleTemps=t2.grille_GrilleTemps)
+	--context Temps inv tempsPointDrone : self.drone_DronePointTemps->size() = 1 and self.point_DronePointTemps = 1
+	context Temps inv tempsPointDrone1_n_1: self.drone_DronePointTemps.forAll(d|d.point_DronePointTemps->size() = 1) -- A un temps donné, tous les drones n'appartiennent qu'à un seul et unique point
+	context Temps inv drone1PointParTemps: Temps.allInstances->forAll(t|not t.drone_DronePointTemps->exists(d|d.point_DronePointTemps->size() > 1))-- and t.drone_DronePointTemps->size() = Drone.allInstances->size() and t.point_DronePointTemps->size() = Point.allInstances->size())
+	--context Temps inv TempsEnCharge: Temps.allInstances.forAll(t|if t.drone_DronePointTemps.)
 
 	-- Pour la Grille
 	context Grille inv nbPoints : self.points_Grille->size >= 0
+	context Grille inv oneLastTemps:
+	  self.temps_GrilleTemps->one(last | self.temps_GrilleTemps->forAll(t|last.succPlus()->includesAll(t.succPlus())))
+	context Grille inv noCycles:
+	  self.temps_GrilleTemps->forAll(t | t.predPlus()->excludes(t))
 
 	-- Pour les Points
 	--context Point inv minumumDrone : self.drone_ReceptacleDrone >= 0
@@ -278,6 +278,7 @@ constraints
 	context Point inv successeurs : self.pointsSuivants_Points->size <= 4 and self.pointsSuivants_Points->size >= 0 
 	context Point inv capacite : self.contenancePoint <= 1 and self.contenancePoint >= 0
 	context Point inv interblocagePoint : self.pointsSuivants_Points->exists(p|p.contenancePoint = 0) //Au moins une porte de sortie par Point
+	--context Point inv pointTempsDrone : self.temps_DronePointTemps->size() >= 1 and self.point_DronePointTemps >= 1
 
 	-- Pour les Drones
 	context Drone inv batterie : self.batterie >= 0 and self.batterie <= 3
@@ -314,11 +315,11 @@ constraints
 
 	-- Pour les Drones
 		context Drone::chargerBatterie()
-		pre batteriePre0: self.point_PositionDrone.estReceptacle = true
-		pre batteriePre1: self.point_PositionDrone.contenancePoint = 1
+		pre batteriePre0: self.point_DronePointTemps->asSequence()->at(0).estReceptacle = true
+		pre batteriePre1: self.point_DronePointTemps->asSequence()->at(0).contenancePoint = 1
 		pre batteriePre2: self.batterie < 3
-		pre batteriePre3: self.point_PositionDrone.receptacle_Receptacle.livraisonEnCours = false
-		pre batteriePre4: self.point_PositionDrone.receptacle_Receptacle.batterieEnCours = true
+		pre batteriePre3: self.point_DronePointTemps->asSequence()->at(0).receptacle_Receptacle.livraisonEnCours = false
+		pre batteriePre4: self.point_DronePointTemps->asSequence()->at(0).receptacle_Receptacle.batterieEnCours = true
 		post batteriePost: self.batterie <= 3
 
 		context Drone::livrerCommande()

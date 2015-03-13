@@ -10,6 +10,15 @@
     <showrolenames>false</showrolenames>
     <showgrid>false</showgrid>
   </diagramOptions>
+  <node id="est_a_l_entrepot" sizeCalculated="true" type="StateNode">
+    <name>est_a_l_entrepot</name>
+    <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
+      <x>264.22603412646987</x>
+      <y>160.4095336405619</y>
+    </strategy>
+    <showInvariant>true</showInvariant>
+    <hidden>false</hidden>
+  </node>
   <node height="14.0" id="startUp" sizeCalculated="false"
     type="PseudoStateNode" width="14.0">
     <name>startUp</name>
@@ -33,15 +42,6 @@
       </strategy>
       <hidden>false</hidden>
     </node>
-    <hidden>false</hidden>
-  </node>
-  <node id="est_a_l_entrepot" sizeCalculated="true" type="StateNode">
-    <name>est_a_l_entrepot</name>
-    <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-      <x>72.22603412646987</x>
-      <y>77.40953364056192</y>
-    </strategy>
-    <showInvariant>true</showInvariant>
     <hidden>false</hidden>
   </node>
   <edge type="Transition">
