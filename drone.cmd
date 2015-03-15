@@ -156,6 +156,7 @@ open drones.use
 !insert (c2,r3,pr5) into Commande_Association
 
 --********************Mise à jour des attributs des Attributs des Classes*****************************
+
 -- Pour les Points
 !set p1.estReceptacle := true
 !set p1.estEntrepot:= false
@@ -251,8 +252,8 @@ open drones.use
 !set d2.idPointCourant := 0
 !set d2.nbPoints := d2.parcoursDrone->size()
 
-check
+-- Pour la Grille
+!set g.tempsCourant := t1
+!g.executer()
 
-gen start drones.assl ExecuterModel(g,12) 
-gen result
-gen result accept
+check

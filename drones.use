@@ -4,8 +4,6 @@ model DroneModel
 class Temps
 	attributes
 		id : Integer
-		stringLue : String
-		stringEcrite : String init = 'Appuyez sur la touche Entree pour continuer ...'
 		tempsSuivant : Temps
 
 	operations
@@ -18,11 +16,9 @@ class Temps
 					else
 						drone.recule1Pas();
 				end
+				--insert(self, self.tempsSuivant) into Temps_Association;
 				--insert (drone, drone.parcoursDrone.at(drone.idPointCourant),self) into DronePointTemps_Association;
 			end
-
-			--insert (self,tSucc) into Temps_Association;
-			--insert (self.grille_GrilleTemps,tempsSuivant) into GrilleTemps_Association;
 		end
 
 		tempsSuivantOp():Temps begin
@@ -79,12 +75,17 @@ class PointVide
 end
 
 class Grille
+	attributes
+		tempsCourant : Temps
 	operations
 		getEntrepot():Entrepot begin
 			--result := self.entrepot_Position; --Défini grâce à l'assocition "position"
 		end
-		ajouterPoint(p:Point)
-		supprimerPoint(p:Point)
+
+		executer() begin
+			self.tempsCourant.execute();
+			self.tempsCourant := self.tempsCourant.tempsSuivant;
+		end
 end
 
 class Drone 
@@ -123,9 +124,10 @@ class Drone
 		end
 
 		avance1Pas() begin
-			if self.batterie <= 1 and self.parcoursDrone->at(self.idPointCourant).estReceptacle = true then
+			if self.batterie <= 1 and (self.parcoursDrone->at(self.idPointCourant).estReceptacle = true or self.parcoursDrone->at(self.idPointCourant).estEntrepot = true) then
 				if self.droneStatus = 0 then
 					self.atterissageDrone();
+					self.parcoursDrone->at(self.idPointCourant).receptacle_Receptacle.batterieEnCours := true;
 					else
 						self.chargerBatterie();
 				end
@@ -133,14 +135,25 @@ class Drone
 					if self.parcoursDrone->size() = (self.idPointCourant + 1) and self.commandeLivree = false then
 						if self.droneStatus = 0 then
 							self.atterissageDrone();
+							self.parcoursDrone->at(self.idPointCourant).receptacle_Receptacle.livraisonEnCours := true;
 							else
 								self.livrerCommande();
 						end
 						else
-							self.batterie := self.batterie - 1;
-							self.parcoursDrone->at(self.idPointCourant).contenancePoint := 0;
-							self.idPointCourant := self.idPointCourant + 1;
-							self.parcoursDrone->at(self.idPointCourant).contenancePoint := 1;
+							if self.droneStatus = 1 then
+								self.decollageDrone();
+								if self.parcoursDrone->at(self.idPointCourant).estReceptacle then
+									self.parcoursDrone->at(self.idPointCourant).receptacle_Receptacle.batterieEnCours := false;
+									self.parcoursDrone->at(self.idPointCourant).receptacle_Receptacle.livraisonEnCours := false;
+									else
+										self.attendre();
+								end
+								else
+									self.batterie := self.batterie - 1;
+									self.parcoursDrone->at(self.idPointCourant).contenancePoint := 0;
+									self.idPointCourant := self.idPointCourant + 1;
+									self.parcoursDrone->at(self.idPointCourant).contenancePoint := 1;
+							end
 					end
 			end
 		end
@@ -149,9 +162,10 @@ class Drone
 		end
 
 		recule1Pas() begin
-			if self.batterie <= 1 and self.parcoursDrone->at(self.idPointCourant).estReceptacle = true then
+			if self.batterie <= 1 and (self.parcoursDrone->at(self.idPointCourant).estReceptacle = true or self.parcoursDrone->at(self.idPointCourant).estEntrepot = true) then
 				if self.droneStatus = 0 then
 					self.atterissageDrone();
+					self.parcoursDrone->at(self.idPointCourant).receptacle_Receptacle.batterieEnCours := true;
 					else
 						self.chargerBatterie();
 				end
@@ -160,13 +174,19 @@ class Drone
 						if self.droneStatus = 0 then
 							self.atterissageDrone();
 							else
-								self.attendre()
+								self.attendre();
 						end
 						else
 							self.batterie := self.batterie - 1;
 							self.parcoursDrone->at(self.idPointCourant).contenancePoint := 0;
 							self.idPointCourant := self.idPointCourant - 1;
 							self.parcoursDrone->at(self.idPointCourant).contenancePoint := 1;
+							if self.parcoursDrone->at(self.idPointCourant).estReceptacle then
+								self.parcoursDrone->at(self.idPointCourant).receptacle_Receptacle.batterieEnCours := false;
+								self.parcoursDrone->at(self.idPointCourant).receptacle_Receptacle.livraisonEnCours := false;
+								else
+									self.attendre();
+							end
 					end
 			end
 		end
@@ -311,10 +331,8 @@ constraints
 	context Temps inv succ0_1: self.succ->size <= 1
 	context Temps inv pred0_1: self.pred->size <= 1
 	context t1:Temps inv commutativity: Temps.allInstances->forAll(t2 | t1.succ->includes(t2) implies t1.grille_GrilleTemps=t2.grille_GrilleTemps)
-	--context Temps inv tempsPointDrone : self.drone_DronePointTemps->size() = 1 and self.point_DronePointTemps = 1
-	context Temps inv tempsPointDrone1_n_1: self.drone_DronePointTemps.forAll(d|d.point_DronePointTemps->size() = 1) -- A un temps donné, tous les drones n'appartiennent qu'à un seul et unique point
+	-- context Temps inv tempsPointDrone1_n_1: self.drone_DronePointTemps.forAll(d|d.point_DronePointTemps->size() = 1) -- A un temps donné, tous les drones n'appartiennent qu'à un seul et unique point => remplacé par l'invariant suivant "drone1PointParTemps"
 	context Temps inv drone1PointParTemps: Temps.allInstances->forAll(t|not t.drone_DronePointTemps->exists(d|d.point_DronePointTemps->size() > 1))-- and t.drone_DronePointTemps->size() = Drone.allInstances->size() and t.point_DronePointTemps->size() = Point.allInstances->size())
-	--context Temps inv TempsEnCharge: Temps.allInstances.forAll(t|if t.drone_DronePointTemps.)
 
 	-- Pour la Grille
 	context Grille inv nbPoints : self.points_Grille->size >= 0
@@ -324,13 +342,10 @@ constraints
 	  self.temps_GrilleTemps->forAll(t | t.predPlus()->excludes(t))
 
 	-- Pour les Points
-	--context Point inv minumumDrone : self.drone_ReceptacleDrone >= 0
-	--context Point inv maximumDrone : self.drone_ReceptacleDrone <= 100
 	context Point inv idPoints : self.id > 0
 	context Point inv successeurs : self.pointsSuivants_Points->size <= 4 and self.pointsSuivants_Points->size >= 0 
 	context Point inv capacite : self.contenancePoint <= 1 and self.contenancePoint >= 0
 	context Point inv interblocagePoint : self.pointsSuivants_Points->exists(p|p.contenancePoint = 0) //Au moins une porte de sortie par Point
-	--context Point inv pointTempsDrone : self.temps_DronePointTemps->size() >= 1 and self.point_DronePointTemps >= 1
 
 	-- Pour les Drones
 	context Drone inv batterie : self.batterie >= 0 and self.batterie <= 3
@@ -345,14 +360,12 @@ constraints
 
 	-- Pour le Réceptacle
 	context Receptacle inv capaciteRCAP : self.capaciteRCAP > 0
-	context r1:Receptacle inv receptacle2Coups : r1.point_Receptacle.pointsSuivants_Points->exists(p|p.estReceptacle = true) or r1.point_Receptacle.pointsSuivants_Points->exists(r2|r2.pointsSuivants_Points->exists(r3|(r3.estReceptacle = true and r3 <> r1.point_Receptacle))) --A Modifier pour inclure l'exclusion du receptacle r1
+	context r1:Receptacle inv receptacle2Coups : r1.point_Receptacle.pointsSuivants_Points->exists(p|p.estReceptacle = true) or r1.point_Receptacle.pointsSuivants_Points->exists(r2|r2.pointsSuivants_Points->exists(r3|(r3.estReceptacle = true and r3 <> r1.point_Receptacle)))
 	context Receptacle inv protectionReceptacle : self.point_Receptacle.estEntrepot <> true and self.point_Receptacle.estPointVide <> true -- Un point de type Receptacle n'est pas un Point Vide ni un Entrepot
 
 	-- Pour l'Entrepôt
 	context Entrepot inv nbDrones0_DNB : self.capaciteDNB >= 0
 	context Entrepot inv nbReceptacless0_RNB : self.capaciteRNB > 0
-	--context Entrepot inv receptacle1_n : self.receptacle_Position->size > 0 
-	--context Entrepot inv receptacle : self.point_Entrepot.pointsSuivants_Points->exists(p|p.estReceptacle())
 	context Entrepot inv receptacleEntrepot : self.point_Entrepot.pointsSuivants_Points->exists(p|p.estReceptacle = true) --Au moins un réceptacle après un entrepôt
 	context Entrepot inv protectionEntrepot : self.point_Entrepot.estReceptacle <> true and self.point_Entrepot.estPointVide <> true -- Un point de type Entrepot n'est pas un Point Vide ni un Receptacle
 
