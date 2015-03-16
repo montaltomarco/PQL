@@ -45,26 +45,7 @@ class Point
 		estOccupeOp():Boolean begin
 			result := (self.contenancePoint = 1);
 		end
-statemachines
 
-	 psm Usage
-
-	 states
-	 -- The start node
-	 startUp:initial
-	 -- The initial state after creation.
-	 estLibre [self.contenancePoint = 0 and ((self.estReceptacle = false and self.estEntrepot = false and self.estPointVide = false) or (self.estReceptacle = true and self.estEntrepot = false and self.estPointVide = false) or (self.estReceptacle = false and self.estEntrepot = true and self.estPointVide = false) or (self.estReceptacle = false and self.estEntrepot = false and self.estPointVide = true))]
-	 -- une drone est arrivee.
-	 droneArrivee [self.contenancePoint = 1]
-
-	 transitions
-	 -- Define the first state after creation.
-	 startUp -> estLibre { create }
-	 -- A drone has arrived.
-	 estLibre -> droneArrivee {[self.contenancePoint = 1] estOccupeOp()}
-	 -- Abort
-	 droneArrivee -> estLibre {estLibreOp()}
-	 end
 end
 
 class PointVide
@@ -93,6 +74,7 @@ class Drone
 		batterie : Integer init = 3
 		capaciteMaxDCAP : Integer init = 0
 		capaciteChargeeCommande : Integer init = 0
+		commande : Commande
 		commandeLivree : Boolean init = false
 		parcoursDrone : Sequence(Point) init = Sequence{}
 		idPointCourant : Integer init = 0
@@ -102,6 +84,8 @@ class Drone
 		droneStatus : Integer init = 0 -- 0 pour en vol et 1 pour posé
 		
 	operations
+		retournerEntrepot() begin
+			end
 		ajouterPoint(p:Point) begin
 			self.parcoursDrone := self.parcoursDrone->append(p);
 		end
@@ -198,9 +182,24 @@ class Drone
 		startUp:initial
 		-- The initial state after creation.
 		est_a_l_entrepot [self.batterie = 3 and self.commandeLivree = false]
+		-- en train de se deplacer
+		seDeplace
+		-- charge sa batterie
+		charge_Batterie
+		-- livrer la commandeLivree
+		livraison_en_cours 
+		
 		transitions
 		-- Define the first state after creation.
 		startUp -> est_a_l_entrepot { create }
+		est_a_l_entrepot -> seDeplace {avance1Pas()}
+		seDeplace -> est_a_l_entrepot {retournerEntrepot()}
+		seDeplace -> charge_Batterie {chargerBatterie()}
+		charge_Batterie -> seDeplace {avance1Pas()}
+		seDeplace -> livraison_en_cours {livrerCommande()}
+		livraison_en_cours -> seDeplace {avance1Pas()}
+		seDeplace -> seDeplace {avance1Pas()}
+		livraison_en_cours -> charge_Batterie {chargerBatterie()}
 	end
 end
 
@@ -237,6 +236,33 @@ class Commande
 	operations
 		ajouterProduit(pr:Produit)
 		supprimerProduit(pr:Produit)
+		passerCommande() begin
+		end
+		
+	statemachines
+
+	 psm Usage
+
+	 states
+	 -- The start node
+	 startUp:initial
+	 -- The initial state after creation.
+	 attente
+	 -- une commande 
+	 enCours 
+	 -- passer  la commande
+	 fin
+	
+	 transitions
+	 -- Define the first state after creation.
+	 startUp -> attente { create }
+	 attente -> enCours { ajouterProduit()}
+	 enCours -> enCours { ajouterProduit()}
+	 enCours -> fin {passerCommande()}
+	 fin -> attente
+	 
+	 
+	 end
 end
 
 class Receptacle
@@ -249,6 +275,7 @@ class Receptacle
 		estSurvole():Boolean begin
 			result := (self.point_Receptacle.contenancePoint < 1);
 		end
+		
 		estLivrable(d : Drone) : Boolean begin
 			if d.capaciteChargeeCommande > self.capaciteRCAP then
 				result := false
@@ -256,6 +283,56 @@ class Receptacle
 				result := true
 			end
 		end
+			
+		livrerDrone() begin
+			self.livraisonEnCours := true;
+			self.occupationPlateforme := true;
+		end
+		
+		chargerDrone() begin
+			self.batterieEnCours := true;
+			self.occupationPlateforme := true;
+		end
+		
+		liberer() begin
+			self.occupationPlateforme := false;
+			self.livraisonEnCours := false;
+			self.batterieEnCours := false;
+		end
+		
+		
+	statemachines
+
+	 psm Usage
+
+	 states
+	 -- The start node
+	 startUp:initial
+	 -- The initial state after creation.
+	 estLibre 
+	 -- une drone est arrivee pour se charger.
+	 enCharge 
+	 -- une drone livre
+	 enLivraison
+	 -- une derone la survole
+	 enSurvol
+
+	 transitions
+	 -- Define the first state after creation.
+	 startUp -> estLibre { create }
+	 -- une drone va se charger.
+	 estLibre -> enCharge {chargerDrone()}
+	 -- une drone va livrer
+	 estLibre -> enLivraison {livrerDrone()}
+	 -- rien ne se passe
+	 estLibre -> estLibre {liberer()}
+	 -- une drone fini son chargement
+	 enCharge -> estLibre {liberer()}
+	 enLivraison -> estLibre {liberer()}
+	 estLibre -> enSurvol { estSurvole()}
+	 enSurvol -> estLibre { liberer()}
+	 
+	 end
 end
 
 -- ******************************** Déclaration des Associations ********************************

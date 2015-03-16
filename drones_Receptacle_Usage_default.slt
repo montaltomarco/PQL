@@ -10,12 +10,21 @@
     <showrolenames>false</showrolenames>
     <showgrid>false</showgrid>
   </diagramOptions>
+  <node id="enCharge" sizeCalculated="true" type="StateNode">
+    <name>enCharge</name>
+    <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
+      <x>95.37433221000117</x>
+      <y>123.66041158660411</y>
+    </strategy>
+    <showInvariant>true</showInvariant>
+    <hidden>false</hidden>
+  </node>
   <node height="14.0" id="startUp" sizeCalculated="false"
     type="PseudoStateNode" width="14.0">
     <name>startUp</name>
     <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-      <x>56.1580066954422</x>
-      <y>68.48423760200497</y>
+      <x>93.14883611458964</x>
+      <y>37.302357559058485</y>
     </strategy>
     <node id="startUp::StateName" sizeCalculated="true" type="StateName">
       <name>startUp</name>
@@ -35,49 +44,39 @@
     </node>
     <hidden>false</hidden>
   </node>
-  <node id="est_a_l_entrepot" sizeCalculated="true" type="StateNode">
-    <name>est_a_l_entrepot</name>
+  <node id="enSurvol" sizeCalculated="true" type="StateNode">
+    <name>enSurvol</name>
     <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-      <x>261.22603412646987</x>
-      <y>47.409533640561904</y>
+      <x>116.50228188379796</x>
+      <y>311.02832346085825</y>
     </strategy>
     <showInvariant>true</showInvariant>
     <hidden>false</hidden>
   </node>
-  <node id="livraison_en_cours" sizeCalculated="true" type="StateNode">
-    <name>livraison_en_cours</name>
+  <node id="estLibre" sizeCalculated="true" type="StateNode">
+    <name>estLibre</name>
     <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-      <x>31.513085304111964</x>
-      <y>94.57556421100546</y>
+      <x>381.71610832555183</x>
+      <y>71.30922198949887</y>
     </strategy>
     <showInvariant>true</showInvariant>
     <hidden>false</hidden>
   </node>
-  <node id="charge_Batterie" sizeCalculated="true" type="StateNode">
-    <name>charge_Batterie</name>
+  <node id="enLivraison" sizeCalculated="true" type="StateNode">
+    <name>enLivraison</name>
     <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-      <x>39.631446797656</x>
-      <y>236.92879744654982</y>
-    </strategy>
-    <showInvariant>true</showInvariant>
-    <hidden>false</hidden>
-  </node>
-  <node id="seDeplace" sizeCalculated="true" type="StateNode">
-    <name>seDeplace</name>
-    <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyFixed">
-      <x>348.784194224006</x>
-      <y>236.3204793089987</y>
+      <x>382.81254884506694</x>
+      <y>264.0</y>
     </strategy>
     <showInvariant>true</showInvariant>
     <hidden>false</hidden>
   </node>
   <edge type="Transition">
-    <source>seDeplace</source>
-    <target>est_a_l_entrepot</target>
-    <name>retournerEntrepot()/</name>
+    <source>estLibre</source>
+    <target>enCharge</target>
+    <name>chargerDrone()/</name>
     <waypoints>
-      <edgeproperty
-        id="transition::seDeplace::est_a_l_entrepot::::WayPoint::0"
+      <edgeproperty id="transition::estLibre::enCharge::::WayPoint::0"
         sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
         <name>0</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
@@ -88,8 +87,7 @@
         <specialid>1</specialid>
         <hidden>false</hidden>
       </edgeproperty>
-      <edgeproperty
-        id="transition::seDeplace::est_a_l_entrepot::::WayPoint::1"
+      <edgeproperty id="transition::estLibre::enCharge::::WayPoint::1"
         sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
         <name>1</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
@@ -104,20 +102,72 @@
     <hidden>false</hidden>
     <Transitions>
       <Transition>
-        <trigger>retournerEntrepot()</trigger>
+        <trigger>chargerDrone()</trigger>
         <guard/>
         <post/>
-        <edgeproperty id="retournerEntrepot()/" sizeCalculated="true"
+        <edgeproperty id="chargerDrone()/" sizeCalculated="true"
+          type="TransitionLabel" userDefined="false" visible="true">
+          <name>chargerDrone()/</name>
+          <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
+            <userOffsetX>0.0</userOffsetX>
+            <userOffsetY>0.0</userOffsetY>
+            <offsetX>0.0</offsetX>
+            <offsetY>10.0</offsetY>
+            <related length="2">
+              <related0>transition::estLibre::enCharge::::WayPoint::0</related0>
+              <related1>transition::estLibre::enCharge::::WayPoint::1</related1>
+            </related>
+          </strategy>
+          <hidden>false</hidden>
+        </edgeproperty>
+      </Transition>
+    </Transitions>
+  </edge>
+  <edge type="Transition">
+    <source>estLibre</source>
+    <target>enSurvol</target>
+    <name>estSurvole() : Boolean/</name>
+    <waypoints>
+      <edgeproperty id="transition::estLibre::enSurvol::::WayPoint::0"
+        sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
+        <name>0</name>
+        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
+          <userOffsetX>0.0</userOffsetX>
+          <userOffsetY>0.0</userOffsetY>
+        </strategy>
+        <id>0</id>
+        <specialid>1</specialid>
+        <hidden>false</hidden>
+      </edgeproperty>
+      <edgeproperty id="transition::estLibre::enSurvol::::WayPoint::1"
+        sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
+        <name>1</name>
+        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
+          <userOffsetX>0.0</userOffsetX>
+          <userOffsetY>0.0</userOffsetY>
+        </strategy>
+        <id>1</id>
+        <specialid>2</specialid>
+        <hidden>false</hidden>
+      </edgeproperty>
+    </waypoints>
+    <hidden>false</hidden>
+    <Transitions>
+      <Transition>
+        <trigger>estSurvole() : Boolean</trigger>
+        <guard/>
+        <post/>
+        <edgeproperty id="estSurvole() : Boolean/" sizeCalculated="true"
           type="TransitionLabel" userDefined="true" visible="true">
-          <name>retournerEntrepot()/</name>
+          <name>estSurvole() : Boolean/</name>
           <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
-            <userOffsetX>62.0</userOffsetX>
-            <userOffsetY>0.0</userOffsetY>
+            <userOffsetX>-52.0</userOffsetX>
+            <userOffsetY>36.0</userOffsetY>
             <offsetX>0.0</offsetX>
             <offsetY>10.0</offsetY>
             <related length="2">
-              <related0>transition::seDeplace::est_a_l_entrepot::::WayPoint::0</related0>
-              <related1>transition::seDeplace::est_a_l_entrepot::::WayPoint::1</related1>
+              <related0>transition::estLibre::enSurvol::::WayPoint::0</related0>
+              <related1>transition::estLibre::enSurvol::::WayPoint::1</related1>
             </related>
           </strategy>
           <hidden>false</hidden>
@@ -126,12 +176,12 @@
     </Transitions>
   </edge>
   <edge type="Transition">
-    <source>seDeplace</source>
-    <target>livraison_en_cours</target>
-    <name>livrerCommande()/</name>
+    <source>estLibre</source>
+    <target>enLivraison</target>
+    <name>livrerDrone()/</name>
     <waypoints>
       <edgeproperty
-        id="transition::seDeplace::livraison_en_cours::::WayPoint::0"
+        id="transition::estLibre::enLivraison::::WayPoint::0"
         sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
         <name>0</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
@@ -143,7 +193,7 @@
         <hidden>false</hidden>
       </edgeproperty>
       <edgeproperty
-        id="transition::seDeplace::livraison_en_cours::::WayPoint::1"
+        id="transition::estLibre::enLivraison::::WayPoint::1"
         sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
         <name>1</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
@@ -158,416 +208,20 @@
     <hidden>false</hidden>
     <Transitions>
       <Transition>
-        <trigger>livrerCommande()</trigger>
+        <trigger>livrerDrone()</trigger>
         <guard/>
         <post/>
-        <edgeproperty id="livrerCommande()/" sizeCalculated="true"
-          type="TransitionLabel" userDefined="false" visible="true">
-          <name>livrerCommande()/</name>
-          <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
-            <userOffsetX>0.0</userOffsetX>
-            <userOffsetY>0.0</userOffsetY>
-            <offsetX>0.0</offsetX>
-            <offsetY>10.0</offsetY>
-            <related length="2">
-              <related0>transition::seDeplace::livraison_en_cours::::WayPoint::0</related0>
-              <related1>transition::seDeplace::livraison_en_cours::::WayPoint::1</related1>
-            </related>
-          </strategy>
-          <hidden>false</hidden>
-        </edgeproperty>
-      </Transition>
-    </Transitions>
-  </edge>
-  <edge type="Transition">
-    <source>livraison_en_cours</source>
-    <target>charge_Batterie</target>
-    <name>chargerBatterie()/</name>
-    <waypoints>
-      <edgeproperty
-        id="transition::livraison_en_cours::charge_Batterie::::WayPoint::0"
-        sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
-        <name>0</name>
-        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
-          <userOffsetX>0.0</userOffsetX>
-          <userOffsetY>0.0</userOffsetY>
-        </strategy>
-        <id>0</id>
-        <specialid>1</specialid>
-        <hidden>false</hidden>
-      </edgeproperty>
-      <edgeproperty
-        id="transition::livraison_en_cours::charge_Batterie::::WayPoint::1"
-        sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
-        <name>1</name>
-        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
-          <userOffsetX>0.0</userOffsetX>
-          <userOffsetY>0.0</userOffsetY>
-        </strategy>
-        <id>1</id>
-        <specialid>2</specialid>
-        <hidden>false</hidden>
-      </edgeproperty>
-    </waypoints>
-    <hidden>false</hidden>
-    <Transitions>
-      <Transition>
-        <trigger>chargerBatterie()</trigger>
-        <guard/>
-        <post/>
-        <edgeproperty id="chargerBatterie()/" sizeCalculated="true"
-          type="TransitionLabel" userDefined="false" visible="true">
-          <name>chargerBatterie()/</name>
-          <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
-            <userOffsetX>0.0</userOffsetX>
-            <userOffsetY>0.0</userOffsetY>
-            <offsetX>0.0</offsetX>
-            <offsetY>10.0</offsetY>
-            <related length="2">
-              <related0>transition::livraison_en_cours::charge_Batterie::::WayPoint::0</related0>
-              <related1>transition::livraison_en_cours::charge_Batterie::::WayPoint::1</related1>
-            </related>
-          </strategy>
-          <hidden>false</hidden>
-        </edgeproperty>
-      </Transition>
-    </Transitions>
-  </edge>
-  <edge type="Transition">
-    <source>seDeplace</source>
-    <target>charge_Batterie</target>
-    <name>chargerBatterie()/</name>
-    <waypoints>
-      <edgeproperty
-        id="transition::seDeplace::charge_Batterie::::WayPoint::0"
-        sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
-        <name>0</name>
-        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
-          <userOffsetX>0.0</userOffsetX>
-          <userOffsetY>0.0</userOffsetY>
-        </strategy>
-        <id>0</id>
-        <specialid>1</specialid>
-        <hidden>false</hidden>
-      </edgeproperty>
-      <edgeproperty
-        id="transition::seDeplace::charge_Batterie::::WayPoint::1"
-        sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
-        <name>1</name>
-        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
-          <userOffsetX>0.0</userOffsetX>
-          <userOffsetY>0.0</userOffsetY>
-        </strategy>
-        <id>1</id>
-        <specialid>2</specialid>
-        <hidden>false</hidden>
-      </edgeproperty>
-    </waypoints>
-    <hidden>false</hidden>
-    <Transitions>
-      <Transition>
-        <trigger>chargerBatterie()</trigger>
-        <guard/>
-        <post/>
-        <edgeproperty id="chargerBatterie()/" sizeCalculated="true"
-          type="TransitionLabel" userDefined="false" visible="true">
-          <name>chargerBatterie()/</name>
-          <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
-            <userOffsetX>0.0</userOffsetX>
-            <userOffsetY>0.0</userOffsetY>
-            <offsetX>0.0</offsetX>
-            <offsetY>10.0</offsetY>
-            <related length="2">
-              <related0>transition::seDeplace::charge_Batterie::::WayPoint::0</related0>
-              <related1>transition::seDeplace::charge_Batterie::::WayPoint::1</related1>
-            </related>
-          </strategy>
-          <hidden>false</hidden>
-        </edgeproperty>
-      </Transition>
-    </Transitions>
-  </edge>
-  <edge type="Transition">
-    <source>livraison_en_cours</source>
-    <target>seDeplace</target>
-    <name>avance1Pas()/</name>
-    <waypoints>
-      <edgeproperty
-        id="transition::livraison_en_cours::seDeplace::::WayPoint::0"
-        sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
-        <name>0</name>
-        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
-          <userOffsetX>0.0</userOffsetX>
-          <userOffsetY>0.0</userOffsetY>
-        </strategy>
-        <id>0</id>
-        <specialid>1</specialid>
-        <hidden>false</hidden>
-      </edgeproperty>
-      <edgeproperty
-        id="transition::livraison_en_cours::seDeplace::::WayPoint::1"
-        sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
-        <name>1</name>
-        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
-          <userOffsetX>0.0</userOffsetX>
-          <userOffsetY>0.0</userOffsetY>
-        </strategy>
-        <id>1</id>
-        <specialid>2</specialid>
-        <hidden>false</hidden>
-      </edgeproperty>
-    </waypoints>
-    <hidden>false</hidden>
-    <Transitions>
-      <Transition>
-        <trigger>avance1Pas()</trigger>
-        <guard/>
-        <post/>
-        <edgeproperty id="avance1Pas()/" sizeCalculated="true"
-          type="TransitionLabel" userDefined="false" visible="true">
-          <name>avance1Pas()/</name>
-          <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
-            <userOffsetX>0.0</userOffsetX>
-            <userOffsetY>0.0</userOffsetY>
-            <offsetX>0.0</offsetX>
-            <offsetY>10.0</offsetY>
-            <related length="2">
-              <related0>transition::livraison_en_cours::seDeplace::::WayPoint::0</related0>
-              <related1>transition::livraison_en_cours::seDeplace::::WayPoint::1</related1>
-            </related>
-          </strategy>
-          <hidden>false</hidden>
-        </edgeproperty>
-      </Transition>
-    </Transitions>
-  </edge>
-  <edge type="Transition">
-    <source>charge_Batterie</source>
-    <target>seDeplace</target>
-    <name>avance1Pas()/</name>
-    <waypoints>
-      <edgeproperty
-        id="transition::charge_Batterie::seDeplace::::WayPoint::0"
-        sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
-        <name>0</name>
-        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
-          <userOffsetX>0.0</userOffsetX>
-          <userOffsetY>0.0</userOffsetY>
-        </strategy>
-        <id>0</id>
-        <specialid>1</specialid>
-        <hidden>false</hidden>
-      </edgeproperty>
-      <edgeproperty
-        id="transition::charge_Batterie::seDeplace::::WayPoint::1"
-        sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
-        <name>1</name>
-        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
-          <userOffsetX>0.0</userOffsetX>
-          <userOffsetY>0.0</userOffsetY>
-        </strategy>
-        <id>1</id>
-        <specialid>2</specialid>
-        <hidden>false</hidden>
-      </edgeproperty>
-    </waypoints>
-    <hidden>false</hidden>
-    <Transitions>
-      <Transition>
-        <trigger>avance1Pas()</trigger>
-        <guard/>
-        <post/>
-        <edgeproperty id="avance1Pas()/" sizeCalculated="true"
-          type="TransitionLabel" userDefined="false" visible="true">
-          <name>avance1Pas()/</name>
-          <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
-            <userOffsetX>0.0</userOffsetX>
-            <userOffsetY>0.0</userOffsetY>
-            <offsetX>0.0</offsetX>
-            <offsetY>10.0</offsetY>
-            <related length="2">
-              <related0>transition::charge_Batterie::seDeplace::::WayPoint::0</related0>
-              <related1>transition::charge_Batterie::seDeplace::::WayPoint::1</related1>
-            </related>
-          </strategy>
-          <hidden>false</hidden>
-        </edgeproperty>
-      </Transition>
-    </Transitions>
-  </edge>
-  <edge type="Transition">
-    <source>est_a_l_entrepot</source>
-    <target>seDeplace</target>
-    <name>avance1Pas()/</name>
-    <waypoints>
-      <edgeproperty
-        id="transition::est_a_l_entrepot::seDeplace::::WayPoint::0"
-        sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
-        <name>0</name>
-        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
-          <userOffsetX>0.0</userOffsetX>
-          <userOffsetY>0.0</userOffsetY>
-        </strategy>
-        <id>0</id>
-        <specialid>1</specialid>
-        <hidden>false</hidden>
-      </edgeproperty>
-      <edgeproperty
-        id="transition::est_a_l_entrepot::seDeplace::::WayPoint::1"
-        sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
-        <name>1</name>
-        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
-          <userOffsetX>0.0</userOffsetX>
-          <userOffsetY>0.0</userOffsetY>
-        </strategy>
-        <id>1</id>
-        <specialid>2</specialid>
-        <hidden>false</hidden>
-      </edgeproperty>
-    </waypoints>
-    <hidden>false</hidden>
-    <Transitions>
-      <Transition>
-        <trigger>avance1Pas()</trigger>
-        <guard/>
-        <post/>
-        <edgeproperty id="avance1Pas()/" sizeCalculated="true"
+        <edgeproperty id="livrerDrone()/" sizeCalculated="true"
           type="TransitionLabel" userDefined="true" visible="true">
-          <name>avance1Pas()/</name>
+          <name>livrerDrone()/</name>
           <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
-            <userOffsetX>-18.0</userOffsetX>
-            <userOffsetY>-35.0</userOffsetY>
+            <userOffsetX>0.0</userOffsetX>
+            <userOffsetY>-30.0</userOffsetY>
             <offsetX>0.0</offsetX>
             <offsetY>10.0</offsetY>
             <related length="2">
-              <related0>transition::est_a_l_entrepot::seDeplace::::WayPoint::0</related0>
-              <related1>transition::est_a_l_entrepot::seDeplace::::WayPoint::1</related1>
-            </related>
-          </strategy>
-          <hidden>false</hidden>
-        </edgeproperty>
-      </Transition>
-    </Transitions>
-  </edge>
-  <edge type="Transition">
-    <source>seDeplace</source>
-    <target>seDeplace</target>
-    <name>avance1Pas()/</name>
-    <waypoints>
-      <edgeproperty id="transition::seDeplace::seDeplace::::WayPoint::0"
-        sizeCalculated="true" type="WayPoint" userDefined="true" visible="true">
-        <name>0</name>
-        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner">
-          <userOffsetX>28.0</userOffsetX>
-          <userOffsetY>2.0</userOffsetY>
-          <basisDeltaX>ABSOLUTE</basisDeltaX>
-          <deltaX>0.0</deltaX>
-          <maxDeltaX>0.0</maxDeltaX>
-          <basisDeltaY>RELATIVE</basisDeltaY>
-          <deltaY>-0.3333</deltaY>
-          <maxDeltaY>66.66</maxDeltaY>
-          <corner>NORTH_EAST</corner>
-          <relativeNodeId>seDeplace</relativeNodeId>
-        </strategy>
-        <id>0</id>
-        <specialid>1</specialid>
-        <hidden>false</hidden>
-      </edgeproperty>
-      <edgeproperty id="transition::seDeplace::seDeplace::::WayPoint::1"
-        sizeCalculated="true" type="WayPoint" userDefined="true" visible="false">
-        <name>1</name>
-        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner">
-          <userOffsetX>1.0</userOffsetX>
-          <userOffsetY>4.0</userOffsetY>
-          <basisDeltaX>RELATIVE</basisDeltaX>
-          <deltaX>0.6666</deltaX>
-          <maxDeltaX>133.32</maxDeltaX>
-          <basisDeltaY>RELATIVE</basisDeltaY>
-          <deltaY>-0.3333</deltaY>
-          <maxDeltaY>66.66</maxDeltaY>
-          <corner>NORTH_EAST</corner>
-          <relativeNodeId>seDeplace</relativeNodeId>
-        </strategy>
-        <id>1</id>
-        <specialid>3</specialid>
-        <hidden>true</hidden>
-      </edgeproperty>
-      <edgeproperty id="transition::seDeplace::seDeplace::::WayPoint::2"
-        sizeCalculated="true" type="WayPoint" userDefined="true" visible="false">
-        <name>2</name>
-        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner">
-          <userOffsetX>1.0</userOffsetX>
-          <userOffsetY>105.0</userOffsetY>
-          <basisDeltaX>RELATIVE</basisDeltaX>
-          <deltaX>0.6666</deltaX>
-          <maxDeltaX>133.32</maxDeltaX>
-          <basisDeltaY>RELATIVE</basisDeltaY>
-          <deltaY>0.6666</deltaY>
-          <maxDeltaY>133.32</maxDeltaY>
-          <corner>NORTH_EAST</corner>
-          <relativeNodeId>seDeplace</relativeNodeId>
-        </strategy>
-        <id>2</id>
-        <specialid>4</specialid>
-        <hidden>true</hidden>
-      </edgeproperty>
-      <edgeproperty id="transition::seDeplace::seDeplace::::WayPoint::3"
-        sizeCalculated="true" type="WayPoint" userDefined="true" visible="false">
-        <name>3</name>
-        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner">
-          <userOffsetX>40.0</userOffsetX>
-          <userOffsetY>105.0</userOffsetY>
-          <basisDeltaX>RELATIVE</basisDeltaX>
-          <deltaX>-0.3333</deltaX>
-          <maxDeltaX>66.66</maxDeltaX>
-          <basisDeltaY>RELATIVE</basisDeltaY>
-          <deltaY>0.6666</deltaY>
-          <maxDeltaY>133.32</maxDeltaY>
-          <corner>NORTH_EAST</corner>
-          <relativeNodeId>seDeplace</relativeNodeId>
-        </strategy>
-        <id>3</id>
-        <specialid>5</specialid>
-        <hidden>true</hidden>
-      </edgeproperty>
-      <edgeproperty id="transition::seDeplace::seDeplace::::WayPoint::4"
-        sizeCalculated="true" type="WayPoint" userDefined="true" visible="true">
-        <name>4</name>
-        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner">
-          <userOffsetX>78.0</userOffsetX>
-          <userOffsetY>55.0</userOffsetY>
-          <basisDeltaX>RELATIVE</basisDeltaX>
-          <deltaX>-0.3333</deltaX>
-          <maxDeltaX>66.66</maxDeltaX>
-          <basisDeltaY>ABSOLUTE</basisDeltaY>
-          <deltaY>0.0</deltaY>
-          <maxDeltaY>0.0</maxDeltaY>
-          <corner>NORTH_EAST</corner>
-          <relativeNodeId>seDeplace</relativeNodeId>
-        </strategy>
-        <id>4</id>
-        <specialid>2</specialid>
-        <hidden>false</hidden>
-      </edgeproperty>
-    </waypoints>
-    <hidden>false</hidden>
-    <reflexivePosition>NORTH_EAST</reflexivePosition>
-    <Transitions>
-      <Transition>
-        <trigger>avance1Pas()</trigger>
-        <guard/>
-        <post/>
-        <edgeproperty id="avance1Pas()/" sizeCalculated="true"
-          type="TransitionLabel" userDefined="true" visible="true">
-          <name>avance1Pas()/</name>
-          <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
-            <userOffsetX>70.0</userOffsetX>
-            <userOffsetY>8.0</userOffsetY>
-            <offsetX>0.0</offsetX>
-            <offsetY>10.0</offsetY>
-            <related length="2">
-              <related0>transition::seDeplace::seDeplace::::WayPoint::0</related0>
-              <related1>transition::seDeplace::seDeplace::::WayPoint::4</related1>
+              <related0>transition::estLibre::enLivraison::::WayPoint::0</related0>
+              <related1>transition::estLibre::enLivraison::::WayPoint::1</related1>
             </related>
           </strategy>
           <hidden>false</hidden>
@@ -577,11 +231,10 @@
   </edge>
   <edge type="Transition">
     <source>startUp</source>
-    <target>est_a_l_entrepot</target>
+    <target>estLibre</target>
     <name>create/</name>
     <waypoints>
-      <edgeproperty
-        id="transition::startUp::est_a_l_entrepot::::WayPoint::0"
+      <edgeproperty id="transition::startUp::estLibre::::WayPoint::0"
         sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
         <name>0</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
@@ -592,8 +245,7 @@
         <specialid>1</specialid>
         <hidden>false</hidden>
       </edgeproperty>
-      <edgeproperty
-        id="transition::startUp::est_a_l_entrepot::::WayPoint::1"
+      <edgeproperty id="transition::startUp::estLibre::::WayPoint::1"
         sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
         <name>1</name>
         <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
@@ -620,8 +272,292 @@
             <offsetX>0.0</offsetX>
             <offsetY>10.0</offsetY>
             <related length="2">
-              <related0>transition::startUp::est_a_l_entrepot::::WayPoint::0</related0>
-              <related1>transition::startUp::est_a_l_entrepot::::WayPoint::1</related1>
+              <related0>transition::startUp::estLibre::::WayPoint::0</related0>
+              <related1>transition::startUp::estLibre::::WayPoint::1</related1>
+            </related>
+          </strategy>
+          <hidden>false</hidden>
+        </edgeproperty>
+      </Transition>
+    </Transitions>
+  </edge>
+  <edge type="Transition">
+    <source>enSurvol</source>
+    <target>estLibre</target>
+    <name>liberer()/</name>
+    <waypoints>
+      <edgeproperty id="transition::enSurvol::estLibre::::WayPoint::0"
+        sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
+        <name>0</name>
+        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
+          <userOffsetX>0.0</userOffsetX>
+          <userOffsetY>0.0</userOffsetY>
+        </strategy>
+        <id>0</id>
+        <specialid>1</specialid>
+        <hidden>false</hidden>
+      </edgeproperty>
+      <edgeproperty id="transition::enSurvol::estLibre::::WayPoint::1"
+        sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
+        <name>1</name>
+        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
+          <userOffsetX>0.0</userOffsetX>
+          <userOffsetY>0.0</userOffsetY>
+        </strategy>
+        <id>1</id>
+        <specialid>2</specialid>
+        <hidden>false</hidden>
+      </edgeproperty>
+    </waypoints>
+    <hidden>false</hidden>
+    <Transitions>
+      <Transition>
+        <trigger>liberer()</trigger>
+        <guard/>
+        <post/>
+        <edgeproperty id="liberer()/" sizeCalculated="true"
+          type="TransitionLabel" userDefined="false" visible="true">
+          <name>liberer()/</name>
+          <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
+            <userOffsetX>0.0</userOffsetX>
+            <userOffsetY>0.0</userOffsetY>
+            <offsetX>0.0</offsetX>
+            <offsetY>10.0</offsetY>
+            <related length="2">
+              <related0>transition::enSurvol::estLibre::::WayPoint::0</related0>
+              <related1>transition::enSurvol::estLibre::::WayPoint::1</related1>
+            </related>
+          </strategy>
+          <hidden>false</hidden>
+        </edgeproperty>
+      </Transition>
+    </Transitions>
+  </edge>
+  <edge type="Transition">
+    <source>enLivraison</source>
+    <target>estLibre</target>
+    <name>liberer()/</name>
+    <waypoints>
+      <edgeproperty
+        id="transition::enLivraison::estLibre::::WayPoint::0"
+        sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
+        <name>0</name>
+        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
+          <userOffsetX>0.0</userOffsetX>
+          <userOffsetY>0.0</userOffsetY>
+        </strategy>
+        <id>0</id>
+        <specialid>1</specialid>
+        <hidden>false</hidden>
+      </edgeproperty>
+      <edgeproperty
+        id="transition::enLivraison::estLibre::::WayPoint::1"
+        sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
+        <name>1</name>
+        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
+          <userOffsetX>0.0</userOffsetX>
+          <userOffsetY>0.0</userOffsetY>
+        </strategy>
+        <id>1</id>
+        <specialid>2</specialid>
+        <hidden>false</hidden>
+      </edgeproperty>
+    </waypoints>
+    <hidden>false</hidden>
+    <Transitions>
+      <Transition>
+        <trigger>liberer()</trigger>
+        <guard/>
+        <post/>
+        <edgeproperty id="liberer()/" sizeCalculated="true"
+          type="TransitionLabel" userDefined="false" visible="true">
+          <name>liberer()/</name>
+          <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
+            <userOffsetX>0.0</userOffsetX>
+            <userOffsetY>0.0</userOffsetY>
+            <offsetX>0.0</offsetX>
+            <offsetY>10.0</offsetY>
+            <related length="2">
+              <related0>transition::enLivraison::estLibre::::WayPoint::0</related0>
+              <related1>transition::enLivraison::estLibre::::WayPoint::1</related1>
+            </related>
+          </strategy>
+          <hidden>false</hidden>
+        </edgeproperty>
+      </Transition>
+    </Transitions>
+  </edge>
+  <edge type="Transition">
+    <source>enCharge</source>
+    <target>estLibre</target>
+    <name>liberer()/</name>
+    <waypoints>
+      <edgeproperty id="transition::enCharge::estLibre::::WayPoint::0"
+        sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
+        <name>0</name>
+        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
+          <userOffsetX>0.0</userOffsetX>
+          <userOffsetY>0.0</userOffsetY>
+        </strategy>
+        <id>0</id>
+        <specialid>1</specialid>
+        <hidden>false</hidden>
+      </edgeproperty>
+      <edgeproperty id="transition::enCharge::estLibre::::WayPoint::1"
+        sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
+        <name>1</name>
+        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyAttachedIntersection">
+          <userOffsetX>0.0</userOffsetX>
+          <userOffsetY>0.0</userOffsetY>
+        </strategy>
+        <id>1</id>
+        <specialid>2</specialid>
+        <hidden>false</hidden>
+      </edgeproperty>
+    </waypoints>
+    <hidden>false</hidden>
+    <Transitions>
+      <Transition>
+        <trigger>liberer()</trigger>
+        <guard/>
+        <post/>
+        <edgeproperty id="liberer()/" sizeCalculated="true"
+          type="TransitionLabel" userDefined="false" visible="true">
+          <name>liberer()/</name>
+          <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
+            <userOffsetX>0.0</userOffsetX>
+            <userOffsetY>0.0</userOffsetY>
+            <offsetX>0.0</offsetX>
+            <offsetY>10.0</offsetY>
+            <related length="2">
+              <related0>transition::enCharge::estLibre::::WayPoint::0</related0>
+              <related1>transition::enCharge::estLibre::::WayPoint::1</related1>
+            </related>
+          </strategy>
+          <hidden>false</hidden>
+        </edgeproperty>
+      </Transition>
+    </Transitions>
+  </edge>
+  <edge type="Transition">
+    <source>estLibre</source>
+    <target>estLibre</target>
+    <name>liberer()/</name>
+    <waypoints>
+      <edgeproperty id="transition::estLibre::estLibre::::WayPoint::0"
+        sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
+        <name>0</name>
+        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner">
+          <userOffsetX>0.0</userOffsetX>
+          <userOffsetY>0.0</userOffsetY>
+          <basisDeltaX>ABSOLUTE</basisDeltaX>
+          <deltaX>0.0</deltaX>
+          <maxDeltaX>0.0</maxDeltaX>
+          <basisDeltaY>RELATIVE</basisDeltaY>
+          <deltaY>-0.3333</deltaY>
+          <maxDeltaY>66.66</maxDeltaY>
+          <corner>NORTH_EAST</corner>
+          <relativeNodeId>estLibre</relativeNodeId>
+        </strategy>
+        <id>0</id>
+        <specialid>1</specialid>
+        <hidden>false</hidden>
+      </edgeproperty>
+      <edgeproperty id="transition::estLibre::estLibre::::WayPoint::1"
+        sizeCalculated="true" type="WayPoint" userDefined="false" visible="false">
+        <name>1</name>
+        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner">
+          <userOffsetX>0.0</userOffsetX>
+          <userOffsetY>0.0</userOffsetY>
+          <basisDeltaX>RELATIVE</basisDeltaX>
+          <deltaX>0.6666</deltaX>
+          <maxDeltaX>133.32</maxDeltaX>
+          <basisDeltaY>RELATIVE</basisDeltaY>
+          <deltaY>-0.3333</deltaY>
+          <maxDeltaY>66.66</maxDeltaY>
+          <corner>NORTH_EAST</corner>
+          <relativeNodeId>estLibre</relativeNodeId>
+        </strategy>
+        <id>1</id>
+        <specialid>3</specialid>
+        <hidden>true</hidden>
+      </edgeproperty>
+      <edgeproperty id="transition::estLibre::estLibre::::WayPoint::2"
+        sizeCalculated="true" type="WayPoint" userDefined="false" visible="false">
+        <name>2</name>
+        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner">
+          <userOffsetX>0.0</userOffsetX>
+          <userOffsetY>0.0</userOffsetY>
+          <basisDeltaX>RELATIVE</basisDeltaX>
+          <deltaX>0.6666</deltaX>
+          <maxDeltaX>133.32</maxDeltaX>
+          <basisDeltaY>RELATIVE</basisDeltaY>
+          <deltaY>0.6666</deltaY>
+          <maxDeltaY>133.32</maxDeltaY>
+          <corner>NORTH_EAST</corner>
+          <relativeNodeId>estLibre</relativeNodeId>
+        </strategy>
+        <id>2</id>
+        <specialid>4</specialid>
+        <hidden>true</hidden>
+      </edgeproperty>
+      <edgeproperty id="transition::estLibre::estLibre::::WayPoint::3"
+        sizeCalculated="true" type="WayPoint" userDefined="false" visible="false">
+        <name>3</name>
+        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner">
+          <userOffsetX>0.0</userOffsetX>
+          <userOffsetY>0.0</userOffsetY>
+          <basisDeltaX>RELATIVE</basisDeltaX>
+          <deltaX>-0.3333</deltaX>
+          <maxDeltaX>66.66</maxDeltaX>
+          <basisDeltaY>RELATIVE</basisDeltaY>
+          <deltaY>0.6666</deltaY>
+          <maxDeltaY>133.32</maxDeltaY>
+          <corner>NORTH_EAST</corner>
+          <relativeNodeId>estLibre</relativeNodeId>
+        </strategy>
+        <id>3</id>
+        <specialid>5</specialid>
+        <hidden>true</hidden>
+      </edgeproperty>
+      <edgeproperty id="transition::estLibre::estLibre::::WayPoint::4"
+        sizeCalculated="true" type="WayPoint" userDefined="false" visible="true">
+        <name>4</name>
+        <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyRelativeToCorner">
+          <userOffsetX>0.0</userOffsetX>
+          <userOffsetY>0.0</userOffsetY>
+          <basisDeltaX>RELATIVE</basisDeltaX>
+          <deltaX>-0.3333</deltaX>
+          <maxDeltaX>66.66</maxDeltaX>
+          <basisDeltaY>ABSOLUTE</basisDeltaY>
+          <deltaY>0.0</deltaY>
+          <maxDeltaY>0.0</maxDeltaY>
+          <corner>NORTH_EAST</corner>
+          <relativeNodeId>estLibre</relativeNodeId>
+        </strategy>
+        <id>4</id>
+        <specialid>2</specialid>
+        <hidden>false</hidden>
+      </edgeproperty>
+    </waypoints>
+    <hidden>false</hidden>
+    <reflexivePosition>NORTH_EAST</reflexivePosition>
+    <Transitions>
+      <Transition>
+        <trigger>liberer()</trigger>
+        <guard/>
+        <post/>
+        <edgeproperty id="liberer()/" sizeCalculated="true"
+          type="TransitionLabel" userDefined="true" visible="true">
+          <name>liberer()/</name>
+          <strategy type="org.tzi.use.gui.views.diagrams.elements.positioning.StrategyInBetween">
+            <userOffsetX>56.0</userOffsetX>
+            <userOffsetY>-22.0</userOffsetY>
+            <offsetX>0.0</offsetX>
+            <offsetY>10.0</offsetY>
+            <related length="2">
+              <related0>transition::estLibre::estLibre::::WayPoint::0</related0>
+              <related1>transition::estLibre::estLibre::::WayPoint::4</related1>
             </related>
           </strategy>
           <hidden>false</hidden>
